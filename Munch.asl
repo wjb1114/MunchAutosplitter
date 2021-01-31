@@ -31,6 +31,8 @@ init
 	
 	version = "1.0 31-01-2021 wjb1114#8967";
 	vars.curLvl = -1;
+	vars.executiveFix = false;
+	vars.debugVars = "levelId: " + current.levelId + " | isLoad: " + current.isLoad + " | gameState: " + current.gameState;
 }
 
 
@@ -42,6 +44,18 @@ update
 //	print("Level ID      = " + current.levelId.ToString());
 //	print("Loading       = " + current.isLoad.ToString());
 //	print("Current State = " + current.gameState.ToString());
+
+	vars.debugVars = "levelId: " + current.levelId + " | isLoad: " + current.isLoad + " | gameState: " + current.gameState + " | curLvl: " + vars.curLvl + " | old levelId: " + old.levelId + " | exec: " + vars.executiveFix;
+	
+	if (vars.curLvl != 0 && vars.curLvl != current.levelId)
+	{
+		vars.curLvl = current.levelId;
+	}
+	
+	if (vars.curLvl == 22 && current.isLoad == 0 && vars.executiveFix == true)
+	{
+		vars.executiveFix = false;
+	}
 }
 
 start
@@ -76,10 +90,15 @@ split
 	// Splits
 	if(current.levelId == (old.levelId + 1))
 	{
+		if (current.levelId == 22)
+		{
+			vars.executiveFix = true;
+		}
+	
 		vars.curLvl = current.levelId;
 		return true;
 	}
-	else if ((current.levelId == 22) && (current.gameState == 7) && (old.levelId == 22) && (old.gameState == 0)) // handling for end of Loading Dock any% / black quarma
+	else if ((current.levelId == 22) && (current.gameState == 7) && (old.levelId == 22) && (vars.curLvl == 22) && (old.gameState == 0) && vars.executiveFix == false) // handling for end of Loading Dock any% / black quarma
 	{
 		return true;
 	}
