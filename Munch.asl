@@ -6,6 +6,14 @@ state("Munch", "1.0 31-01-2021 wjb1114#8967")
 }
 
 startup {
+	// script startup
+	
+	vars.curLvl = -1;
+	vars.executiveFix = false;
+	vars.gameCrashed = false;
+	vars.raisinFix = false;
+	vars.crashLastLvl = -1;
+
 	settings.Add("nag", true, "REFRESH RATE OF THE AUTOSPLITTER");
 	settings.SetToolTip("nag", "Sets the autosplitter to refresh 30 times per second. Leaving all options unckeched will set refresh rate to 30 by default anyway.");
 	
@@ -27,12 +35,17 @@ startup {
 
 init
 {
-	// more startup actions, not sure if needed
+	// game startup
 	
 	version = "1.0 31-01-2021 wjb1114#8967";
-	vars.curLvl = -1;
-	vars.executiveFix = false;
-	vars.debugVars = "levelId: " + current.levelId + " | isLoad: " + current.isLoad + " | gameState: " + current.gameState;
+	
+	if (vars.curLvl != -1)
+	{
+		vars.gameCrashed = true;
+		vars.crashLastLvl = vars.curLvl;
+	}
+	
+	vars.debugVars = "levelId: " + current.levelId + " | isLoad: " + current.isLoad + " | gameState: " + current.gameState + " | curLvl: " + vars.curLvl + " | old levelId: " + old.levelId + " | exec: " + vars.executiveFix + " | crashed: " + vars.gameCrashed + " | process: " + game.ProcessName;
 }
 
 
@@ -45,16 +58,34 @@ update
 //	print("Loading       = " + current.isLoad.ToString());
 //	print("Current State = " + current.gameState.ToString());
 
-	vars.debugVars = "levelId: " + current.levelId + " | isLoad: " + current.isLoad + " | gameState: " + current.gameState + " | curLvl: " + vars.curLvl + " | old levelId: " + old.levelId + " | exec: " + vars.executiveFix;
+	vars.debugVars = "levelId: " + current.levelId + " | isLoad: " + current.isLoad + " | gameState: " + current.gameState + " | curLvl: " + vars.curLvl + " | old levelId: " + old.levelId + " | exec: " + vars.executiveFix + " | crashed: " + vars.gameCrashed + " | process: " + game.ProcessName;
 	
-	if (vars.curLvl != 0 && vars.curLvl != current.levelId)
+	if (vars.gameCrashed == true)
 	{
-		vars.curLvl = current.levelId;
+		if (current.isLoad == 0)
+		{
+			vars.curLvl = vars.crashLastLvl;
+			vars.gameCrashed = false;
+		}
+		else
+		{
+			return;
+		}
 	}
+	
+	//if (vars.curLvl != 0 && vars.curLvl != current.levelId && current.levelId != 0)
+	//{
+	//	vars.curLvl = current.levelId;
+	//}
 	
 	if (vars.curLvl == 22 && current.isLoad == 0 && vars.executiveFix == true)
 	{
 		vars.executiveFix = false;
+	}
+	
+	if (vars.gameCrashed == true && vars.curLvl > 0)
+	{
+		vars.gameCrashed = false;
 	}
 }
 
@@ -63,6 +94,7 @@ start
 	if ((current.gameState == 9) && (old.gameState == 13))
 	{
 		vars.curLvl = 0;
+		vars.raisinFix = true;
 		return true;
 	}
 }
@@ -88,8 +120,13 @@ split
 	}
 	
 	// Splits
-	if(current.levelId == (old.levelId + 1))
+	if(current.levelId == (old.levelId + 1) || (current.levelId > old.levelId && old.levelId == 0 && vars.curLvl == (current.levelId - 1)))
 	{
+		if (vars.raisinFix == true)
+		{
+			vars.raisinFix = false;
+		}
+	
 		if (current.levelId == 22)
 		{
 			vars.executiveFix = true;
@@ -102,7 +139,7 @@ split
 	{
 		return true;
 	}
-	else if (old.levelId == 23 && new.levelId == 23 && current.isLoad == 1 && old.isLoad == 0) // split from labor egg storage to vykker's suites
+	else if (old.levelId == 23 && current.levelId == 23 && current.isLoad == 1 && old.isLoad == 0) // split from labor egg storage to vykker's suites
 	{
 		vars.curLvl = 24;
 		return true;
@@ -131,10 +168,18 @@ isLoading
 
 reset
 {
-	if (((current.levelId == 0) && (vars.curLvl != -1) && (vars.curLvl != 0)) || (current.gameState == 17 && current.levelId == 0) || (current.gameState == 10 && current.levelId == 0))
+	if (vars.gameCrashed == true || vars.raisinFix == true)
+	{
+		return false;
+	}
+	else if(current.levelId == 0 && current.gameState == 10)
 	{
 		vars.curLvl = -1;
 		return true;
 	}
+	//else if (((current.levelId == 0) && (vars.curLvl != -1) && (vars.curLvl != 0)) || (current.gameState == 17 && current.levelId == 0) || (current.gameState == 10 && current.levelId == 0))
+	//{
+	//	vars.curLvl = -1;
+	//	return true;
+	//}
 }
-
