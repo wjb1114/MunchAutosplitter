@@ -102,6 +102,15 @@ split
 	{
 		return true;
 	}
+	else if (old.levelId == 23 && new.levelId == 23 && current.isLoad == 1 && old.isLoad == 0) // split from labor egg storage to vykker's suites
+	{
+		vars.curLvl = 24;
+		return true;
+	}
+	else if (current.isLoad == 0 && current.gameState == 7 && vars.curLvl == 24) // split after vykker's suites
+	{
+		return true;
+	}
 }
 
 isLoading
