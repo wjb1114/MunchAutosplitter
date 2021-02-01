@@ -78,11 +78,6 @@ update
 	//	vars.curLvl = current.levelId;
 	//}
 	
-	if (vars.curLvl == 22 && current.isLoad == 0 && vars.executiveFix == true)
-	{
-		vars.executiveFix = false;
-	}
-	
 	if (vars.gameCrashed == true && vars.curLvl > 0)
 	{
 		vars.gameCrashed = false;
@@ -122,12 +117,14 @@ split
 	// Splits
 	if(current.levelId == (old.levelId + 1) || (current.levelId > old.levelId && old.levelId == 0 && vars.curLvl == (current.levelId - 1)))
 	{
+		print("Standard split");
+	
 		if (vars.raisinFix == true)
 		{
 			vars.raisinFix = false;
 		}
 	
-		if (current.levelId == 22)
+		if (current.levelId == 21)
 		{
 			vars.executiveFix = true;
 		}
@@ -135,17 +132,29 @@ split
 		vars.curLvl = current.levelId;
 		return true;
 	}
-	else if ((current.levelId == 22) && (current.gameState == 7) && (old.levelId == 22) && (vars.curLvl == 22) && (old.gameState == 0) && vars.executiveFix == false) // handling for end of Loading Dock any% / black quarma
+	else if ((current.levelId == 22) && (current.gameState == 7) && (old.levelId == 22) && (vars.curLvl == 22) && (old.gameState == 0)) // handling for end of Loading Dock any% / black quarma
 	{
-		return true;
+		if (vars.executiveFix == true)
+		{
+			print("any% workaround triggered");
+			vars.executiveFix = false;
+			return false;
+		}
+		else
+		{
+			print("Any% end split");
+			return true;
+		}
 	}
 	else if (old.levelId == 23 && current.levelId == 23 && current.isLoad == 1 && old.isLoad == 0) // split from labor egg storage to vykker's suites
 	{
+		print("24 -> 25 split");
 		vars.curLvl = 24;
 		return true;
 	}
 	else if (current.isLoad == 0 && current.gameState == 7 && vars.curLvl == 24) // split after vykker's suites
 	{
+		print("25 -> end split");
 		return true;
 	}
 }
