@@ -377,6 +377,14 @@ start
 		}
 		else if (settings["dockBad"] || settings["dockGood"])
 		{
+			if (settings["dockBad"])
+			{
+				vars.dockFix = true;
+			}
+			else
+			{
+				vars.dockFix = false;
+			}
 			if (current.loadScreenIndex == "22" && current.levelId == 22 && current.isLoad == 1)
 			{
 				return true;
@@ -393,6 +401,7 @@ start
 		{
 			if (current.loadScreenIndex == "24" && current.levelId == 23 && current.isLoad == 1)
 			{
+				vars.vykkerFix = true;
 				return true;
 			}
 		}
@@ -663,16 +672,33 @@ split
 		// non-standard splits for ending game
 		else if (settings["dockBad"])
 		{
+			
 			if ((current.levelId == 22) && (current.gameState == 7) && (old.levelId == 22) && (old.gameState == 0))
 			{
-				return true;
+				if (vars.dockFix == true)
+				{
+					vars.dockFix = false;
+					return false;
+				}
+				else
+				{
+					return true;
+				}
 			}
 		}
 		else if (settings["vykker"])
 		{
 			if (current.levelId == 23 && current.gameState == 7 && old.gameState == 0)
 			{
-				return true;
+				if (vars.vykkerFix == true)
+				{
+					vars.vykkerFix = false;
+					return false;
+				}
+				else
+				{
+					return true;
+				}
 			}
 		}
 	}
