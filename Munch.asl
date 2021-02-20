@@ -1,4 +1,4 @@
-state("Munch", "1.0 31-01-2021 wjb1114#8967")
+state("Munch", "v1.0.0 20-02-2021 wjb1114#8967")
 {
 	byte levelId : 0x332188;
 	byte isLoad : 0x318351;
@@ -224,168 +224,168 @@ start
 		}
 		else if (settings["spooce"])
 		{
-			if (current.loadScreenIndex == "1" && current.levelId = 1 && current.isLoad == true)
+			if (current.loadScreenIndex == "1" && current.levelId == 1 && current.isLoad == true)
 			{
 				return true;
 			}
 		}
 		else if (settings["fuzzle"])
 		{
-			if (current.loadScreenIndex == "2" && current.levelId = 2 && current.isLoad == true)
+			if (current.loadScreenIndex == "2" && current.levelId == 2 && current.isLoad == true)
 			{
 				return true;
 			}
 		}
 		else if (settings["hydro"])
 		{
-			if (current.loadScreenIndex == "3" && current.levelId = 3 && current.isLoad == true)
+			if (current.loadScreenIndex == "3" && current.levelId == 3 && current.isLoad == true)
 			{
 				return true;
 			}
 		}
 		else if (settings["fluoride"])
 		{
-			if (current.loadScreenIndex == "4" && current.levelId = 4 && current.isLoad == true)
+			if (current.loadScreenIndex == "4" && current.levelId == 4 && current.isLoad == true)
 			{
 				return true;
 			}
 		}
 		else if (settings["snoozie"])
 		{
-			if (current.loadScreenIndex == "5" && current.levelId = 5 && current.isLoad == true)
+			if (current.loadScreenIndex == "5" && current.levelId == 5 && current.isLoad == true)
 			{
 				return true;
 			}
 		}
 		else if (settings["mudPens"])
 		{
-			if (current.loadScreenIndex == "6" && current.levelId = 6 && current.isLoad == true)
+			if (current.loadScreenIndex == "6" && current.levelId == 6 && current.isLoad == true)
 			{
 				return true;
 			}
 		}
 		else if (settings["slogOne"])
 		{
-			if (current.loadScreenIndex == "7" && current.levelId = 7 && current.isLoad == true)
+			if (current.loadScreenIndex == "7" && current.levelId == 7 && current.isLoad == true)
 			{
 				return true;
 			}
 		}
 		else if (settings["fortress"])
 		{
-			if (current.loadScreenIndex == "8" && current.levelId = 8 && current.isLoad == true)
+			if (current.loadScreenIndex == "8" && current.levelId == 8 && current.isLoad == true)
 			{
 				return true;
 			}
 		}
 		else if (settings["slogTwo"])
 		{
-			if (current.loadScreenIndex == "9" && current.levelId = 9 && current.isLoad == true)
+			if (current.loadScreenIndex == "9" && current.levelId == 9 && current.isLoad == true)
 			{
 				return true;
 			}
 		}
 		else if (settings["paramite"])
 		{
-			if (current.loadScreenIndex == "10" && current.levelId = 10 && current.isLoad == true)
+			if (current.loadScreenIndex == "10" && current.levelId == 10 && current.isLoad == true)
 			{
 				return true;
 			}
 		}
 		else if (settings["meep"])
 		{
-			if (current.loadScreenIndex == "11" && current.levelId = 11 && current.isLoad == true)
+			if (current.loadScreenIndex == "11" && current.levelId == 11 && current.isLoad == true)
 			{
 				return true;
 			}
 		}
 		else if (settings["brewery"])
 		{
-			if (current.loadScreenIndex == "12" && current.levelId = 12 && current.isLoad == true)
+			if (current.loadScreenIndex == "12" && current.levelId == 12 && current.isLoad == true)
 			{
 				return true;
 			}
 		}
 		else if (settings["fuel"])
 		{
-			if (current.loadScreenIndex == "13" && current.levelId = 13 && current.isLoad == true)
+			if (current.loadScreenIndex == "13" && current.levelId == 13 && current.isLoad == true)
 			{
 				return true;
 			}
 		}
 		else if (settings["magog"])
 		{
-			if (current.loadScreenIndex == "14" && current.levelId = 14 && current.isLoad == true)
+			if (current.loadScreenIndex == "14" && current.levelId == 14 && current.isLoad == true)
 			{
 				return true;
 			}
 		}
 		else if (settings["river"])
 		{
-			if (current.loadScreenIndex == "15" && current.levelId = 15 && current.isLoad == true)
+			if (current.loadScreenIndex == "15" && current.levelId == 15 && current.isLoad == true)
 			{
 				return true;
 			}
 		}
 		else if (settings["noMuds"])
 		{
-			if (current.loadScreenIndex == "16" && current.levelId = 16 && current.isLoad == true)
+			if (current.loadScreenIndex == "16" && current.levelId == 16 && current.isLoad == true)
 			{
 				return true;
 			}
 		}
 		else if (settings["boiler"])
 		{
-			if (current.loadScreenIndex == "17" && current.levelId = 17 && current.isLoad == true)
+			if (current.loadScreenIndex == "17" && current.levelId == 17 && current.isLoad == true)
 			{
 				return true;
 			}
 		}
 		else if (settings["splinter"])
 		{
-			if (current.loadScreenIndex == "18" && current.levelId = 18 && current.isLoad == true)
+			if (current.loadScreenIndex == "18" && current.levelId == 18 && current.isLoad == true)
 			{
 				return true;
 			}
 		}
 		else if (settings["reservoir"])
 		{
-			if (current.loadScreenIndex == "19" && current.levelId = 19 && current.isLoad == true)
+			if (current.loadScreenIndex == "19" && current.levelId == 19 && current.isLoad == true)
 			{
 				return true;
 			}
 		}
 		else if (settings["scrubPens"])
 		{
-			if (current.loadScreenIndex == "20" && current.levelId = 20 && current.isLoad == true)
+			if (current.loadScreenIndex == "20" && current.levelId == 20 && current.isLoad == true)
 			{
 				return true;
 			}
 		}
 		else if (settings["flubco"])
 		{
-			if (current.loadScreenIndex == "21" && current.levelId = 21 && current.isLoad == true)
+			if (current.loadScreenIndex == "21" && current.levelId == 21 && current.isLoad == true)
 			{
 				return true;
 			}
 		}
 		else if (settings["dockBad"] || settings["dockGood"])
 		{
-			if (current.loadScreenIndex == "22" && current.levelId = 22 && current.isLoad == true)
+			if (current.loadScreenIndex == "22" && current.levelId == 22 && current.isLoad == true)
 			{
 				return true;
 			}
 		}
 		else if (settings["labor"])
 		{
-			if (current.loadScreenIndex == "23" && current.levelId = 23 && current.isLoad == true)
+			if (current.loadScreenIndex == "23" && current.levelId == 23 && current.isLoad == true)
 			{
 				return true;
 			}
 		}
 		else if (settings["vykker"])
 		{
-			if (current.loadScreenIndex == "24" && current.levelId = 23 && current.isLoad == true)
+			if (current.loadScreenIndex == "24" && current.levelId == 23 && current.isLoad == true)
 			{
 				return true;
 			}
