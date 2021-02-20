@@ -3,6 +3,7 @@ state("Munch", "1.0 31-01-2021 wjb1114#8967")
 	byte levelId : 0x332188;
 	byte isLoad : 0x318351;
 	byte gameState : 0x35AF64;
+	string2 loadScreenIndex : 0x358587;
 }
 
 startup {
@@ -13,6 +14,9 @@ startup {
 	vars.gameCrashed = false;
 	vars.raisinFix = false;
 	vars.crashLastLvl = -1;
+	vars.loading = false;
+	vars.trueLoad = false;
+	vars.loadingFix = false;
 
 	settings.Add("nag", true, "REFRESH RATE OF THE AUTOSPLITTER");
 	settings.SetToolTip("nag", "Sets the autosplitter to refresh 30 times per second. Leaving all options unckeched will set refresh rate to 30 by default anyway.");
@@ -31,6 +35,12 @@ startup {
 	
 	settings.Add("120Rate", false, "120 refreshes per second", "nag");
 	settings.SetToolTip("120Rate", "Sets the autosplitter to refresh 120 times per second. R U crazy or wut m8?");	
+	
+	settings.Add("anyPercent", true, "Bad Ending");
+	settings.SetToolTip("anyPercent", "Ends the run on the bad ending cutscene at the end of Loading Dock");
+	
+	settings.Add("hundredPercent", false, "Good Ending");
+	settings.SetToolTip("hundredPercent", "Ands the run on the Good Ending cutscene at the end of Vykkers Suites");
 }
 
 init
@@ -45,7 +55,7 @@ init
 		vars.crashLastLvl = vars.curLvl;
 	}
 	
-	vars.debugVars = "levelId: " + current.levelId + " | isLoad: " + current.isLoad + " | gameState: " + current.gameState + " | curLvl: " + vars.curLvl + " | old levelId: " + old.levelId + " | exec: " + vars.executiveFix + " | crashed: " + vars.gameCrashed + " | process: " + game.ProcessName;
+	vars.debugVars = "levelId: " + current.levelId + " | isLoad: " + current.isLoad + " | gameState: " + current.gameState + " | curLvl: " + vars.curLvl + " | old levelId: " + old.levelId + " | lsi: " + current.loadScreenIndex;
 }
 
 
@@ -58,7 +68,7 @@ update
 //	print("Loading       = " + current.isLoad.ToString());
 //	print("Current State = " + current.gameState.ToString());
 
-	vars.debugVars = "levelId: " + current.levelId + " | isLoad: " + current.isLoad + " | gameState: " + current.gameState + " | curLvl: " + vars.curLvl + " | old levelId: " + old.levelId + " | exec: " + vars.executiveFix + " | crashed: " + vars.gameCrashed + " | process: " + game.ProcessName;
+	vars.debugVars = "levelId: " + current.levelId + " | isLoad: " + current.isLoad + " | gameState: " + current.gameState + " | curLvl: " + vars.curLvl + " | old levelId: " + old.levelId + " | lsi: " + current.loadScreenIndex;
 	
 	if (vars.gameCrashed == true)
 	{
@@ -78,10 +88,38 @@ update
 	//	vars.curLvl = current.levelId;
 	//}
 	
+	if (current.isLoad == 1 && old.isLoad == 0)
+	{
+		vars.loading = true;
+	}
+	
+	if (vars.loading == true && current.gameState != 0 && current.gameState != 5)
+	{
+		vars.trueLoad = true;
+	}
+	
 	if (vars.gameCrashed == true && vars.curLvl > 0)
 	{
 		vars.gameCrashed = false;
 	}
+	
+	if (vars.raisinFix == false && current.levelId > 0 && vars.curLvl <= 0 && current.gameState != 0 && current.gameState != 5)
+	{
+		vars.curLvl = current.levelId;
+	}
+	
+	if (vars.loading == true && vars.trueLoad == true && current.isLoad == 0)
+	{
+		vars.loading = false;
+		vars.trueLoad = false;
+	}
+	
+	if (vars.curLvl > 0 && vars.raisinFix == true)
+	{
+		vars.raisinFix = false;
+	}
+	
+	
 }
 
 start
@@ -90,8 +128,12 @@ start
 	{
 		vars.curLvl = 0;
 		vars.raisinFix = true;
+		vars.loading = false;
+		vars.trueLoad = false;
 		return true;
 	}
+	
+	
 }
 
 split
@@ -115,48 +157,72 @@ split
 	}
 	
 	// Splits
-	if(current.levelId == (old.levelId + 1) || (current.levelId > old.levelId && old.levelId == 0 && vars.curLvl == (current.levelId - 1)))
+	if (settings["anyPercent"])
 	{
-		print("Standard split");
-	
-		if (vars.raisinFix == true)
+		if(current.levelId == (old.levelId + 1) || (current.levelId > old.levelId && old.levelId == 0 && vars.curLvl == (current.levelId - 1)))
 		{
-			vars.raisinFix = false;
+			print("Standard split");
+		
+			if (vars.raisinFix == true)
+			{
+				vars.raisinFix = false;
+			}
+		
+			if (current.levelId == 21)
+			{
+				vars.executiveFix = true;
+			}
+		
+			vars.curLvl = current.levelId;
+			return true;
 		}
-	
-		if (current.levelId == 21)
+		else if ((current.levelId == 22) && (current.gameState == 7) && (old.levelId == 22) && (vars.curLvl == 22) && (old.gameState == 0)) // handling for end of Loading Dock any% / black quarma
 		{
-			vars.executiveFix = true;
+			if (vars.executiveFix == true)
+			{
+				print("any% workaround triggered");
+				vars.executiveFix = false;
+				return false;
+			}
+			else
+			{
+				print("Any% end split");
+				return true;
+			}
 		}
-	
-		vars.curLvl = current.levelId;
-		return true;
 	}
-	else if ((current.levelId == 22) && (current.gameState == 7) && (old.levelId == 22) && (vars.curLvl == 22) && (old.gameState == 0)) // handling for end of Loading Dock any% / black quarma
+	else if (settings["hundredPercent"])
 	{
-		if (vars.executiveFix == true)
+		if((current.levelId == (old.levelId + 1) || (current.levelId > old.levelId && old.levelId == 0 && vars.curLvl == (current.levelId - 1))) && vars.curLvl <= 23)
 		{
-			print("any% workaround triggered");
-			vars.executiveFix = false;
-			return false;
+			print("Standard split");
+		
+			if (vars.raisinFix == true)
+			{
+				vars.raisinFix = false;
+			}
+		
+			if (current.levelId == 21)
+			{
+				vars.executiveFix = true;
+			}
+		
+			vars.curLvl = current.levelId;
+			return true;
 		}
-		else
+		
+		else if (vars.curLvl == 23 && current.loadScreenIndex == "24")
 		{
-			print("Any% end split");
+			vars.curLvl = 24;
+			return true;
+		}
+		else if (vars.curLvl == 24 && current.gameState == 7 && old.gameState == 0)
+		{
+			vars.curLvl = 25;
 			return true;
 		}
 	}
-	else if (old.levelId == 23 && current.levelId == 23 && current.isLoad == 1 && old.isLoad == 0) // split from labor egg storage to vykker's suites
-	{
-		print("24 -> 25 split");
-		vars.curLvl = 24;
-		return true;
-	}
-	else if (current.isLoad == 0 && current.gameState == 7 && vars.curLvl == 24) // split after vykker's suites
-	{
-		print("25 -> end split");
-		return true;
-	}
+	
 }
 
 isLoading
