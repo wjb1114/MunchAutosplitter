@@ -17,6 +17,8 @@ startup {
 	vars.loading = false;
 	vars.trueLoad = false;
 	vars.loadingFix = false;
+	vars.IGT = "";
+	vars.RTA = "";
 
 	settings.Add("nag", true, "REFRESH RATE OF THE AUTOSPLITTER");
 	settings.SetToolTip("nag", "Sets the autosplitter to refresh 30 times per second. Leaving all options unckeched will set refresh rate to 30 by default anyway.");
@@ -140,14 +142,18 @@ init
 	
 	// Note: for testing/development onnly. Using the debug var viewer WILL invalidate your run!
 	vars.debugVars = "levelId: " + current.levelId + " | isLoad: " + current.isLoad + " | gameState: " + current.gameState + " | curLvl: " + vars.curLvl + " | old levelId: " + old.levelId + " | lsi: |" + current.loadScreenIndex + "|";
+	vars.gameVars = "RTA: " + vars.RTA + " | IGT: " + vars.IGT;
 }
 
 
 
 update
 {
+	vars.RTA = "[" + System.Convert.ToString(timer.CurrentTime.RealTime).Replace("0000", "").Replace("00:", "") + "]";
+	vars.IGT = "[" + System.Convert.ToString(timer.CurrentTime.GameTime).Replace("0000", "").Replace("00:", "") + "]";
 	// Note: for testing/development onnly. Using the debug var viewer WILL invalidate your run!
 	vars.debugVars = "levelId: " + current.levelId + " | isLoad: " + current.isLoad + " | gameState: " + current.gameState + " | curLvl: " + vars.curLvl + " | old levelId: " + old.levelId + " | lsi: |" + current.loadScreenIndex + "|";
+	vars.gameVars = "RTA: " + vars.RTA + " | IGT: " + vars.IGT;
 	
 	if (vars.gameCrashed == true)
 	{
