@@ -224,168 +224,168 @@ start
 		}
 		else if (settings["spooce"])
 		{
-			if (current.loadScreenIndex == "1" && current.levelId == 1 && current.isLoad == true)
+			if (current.loadScreenIndex == "1" && current.levelId == 1 && current.isLoad == 1)
 			{
 				return true;
 			}
 		}
 		else if (settings["fuzzle"])
 		{
-			if (current.loadScreenIndex == "2" && current.levelId == 2 && current.isLoad == true)
+			if (current.loadScreenIndex == "2" && current.levelId == 2 && current.isLoad == 1)
 			{
 				return true;
 			}
 		}
 		else if (settings["hydro"])
 		{
-			if (current.loadScreenIndex == "3" && current.levelId == 3 && current.isLoad == true)
+			if (current.loadScreenIndex == "3" && current.levelId == 3 && current.isLoad == 1)
 			{
 				return true;
 			}
 		}
 		else if (settings["fluoride"])
 		{
-			if (current.loadScreenIndex == "4" && current.levelId == 4 && current.isLoad == true)
+			if (current.loadScreenIndex == "4" && current.levelId == 4 && current.isLoad == 1)
 			{
 				return true;
 			}
 		}
 		else if (settings["snoozie"])
 		{
-			if (current.loadScreenIndex == "5" && current.levelId == 5 && current.isLoad == true)
+			if (current.loadScreenIndex == "5" && current.levelId == 5 && current.isLoad == 1)
 			{
 				return true;
 			}
 		}
 		else if (settings["mudPens"])
 		{
-			if (current.loadScreenIndex == "6" && current.levelId == 6 && current.isLoad == true)
+			if (current.loadScreenIndex == "6" && current.levelId == 6 && current.isLoad == 1)
 			{
 				return true;
 			}
 		}
 		else if (settings["slogOne"])
 		{
-			if (current.loadScreenIndex == "7" && current.levelId == 7 && current.isLoad == true)
+			if (current.loadScreenIndex == "7" && current.levelId == 7 && current.isLoad == 1)
 			{
 				return true;
 			}
 		}
 		else if (settings["fortress"])
 		{
-			if (current.loadScreenIndex == "8" && current.levelId == 8 && current.isLoad == true)
+			if (current.loadScreenIndex == "8" && current.levelId == 8 && current.isLoad == 1)
 			{
 				return true;
 			}
 		}
 		else if (settings["slogTwo"])
 		{
-			if (current.loadScreenIndex == "9" && current.levelId == 9 && current.isLoad == true)
+			if (current.loadScreenIndex == "9" && current.levelId == 9 && current.isLoad == 1)
 			{
 				return true;
 			}
 		}
 		else if (settings["paramite"])
 		{
-			if (current.loadScreenIndex == "10" && current.levelId == 10 && current.isLoad == true)
+			if (current.loadScreenIndex == "10" && current.levelId == 10 && current.isLoad == 1)
 			{
 				return true;
 			}
 		}
 		else if (settings["meep"])
 		{
-			if (current.loadScreenIndex == "11" && current.levelId == 11 && current.isLoad == true)
+			if (current.loadScreenIndex == "11" && current.levelId == 11 && current.isLoad == 1)
 			{
 				return true;
 			}
 		}
 		else if (settings["brewery"])
 		{
-			if (current.loadScreenIndex == "12" && current.levelId == 12 && current.isLoad == true)
+			if (current.loadScreenIndex == "12" && current.levelId == 12 && current.isLoad == 1)
 			{
 				return true;
 			}
 		}
 		else if (settings["fuel"])
 		{
-			if (current.loadScreenIndex == "13" && current.levelId == 13 && current.isLoad == true)
+			if (current.loadScreenIndex == "13" && current.levelId == 13 && current.isLoad == 1)
 			{
 				return true;
 			}
 		}
 		else if (settings["magog"])
 		{
-			if (current.loadScreenIndex == "14" && current.levelId == 14 && current.isLoad == true)
+			if (current.loadScreenIndex == "14" && current.levelId == 14 && current.isLoad == 1)
 			{
 				return true;
 			}
 		}
 		else if (settings["river"])
 		{
-			if (current.loadScreenIndex == "15" && current.levelId == 15 && current.isLoad == true)
+			if (current.loadScreenIndex == "15" && current.levelId == 15 && current.isLoad == 1)
 			{
 				return true;
 			}
 		}
 		else if (settings["noMuds"])
 		{
-			if (current.loadScreenIndex == "16" && current.levelId == 16 && current.isLoad == true)
+			if (current.loadScreenIndex == "16" && current.levelId == 16 && current.isLoad == 1)
 			{
 				return true;
 			}
 		}
 		else if (settings["boiler"])
 		{
-			if (current.loadScreenIndex == "17" && current.levelId == 17 && current.isLoad == true)
+			if (current.loadScreenIndex == "17" && current.levelId == 17 && current.isLoad == 1)
 			{
 				return true;
 			}
 		}
 		else if (settings["splinter"])
 		{
-			if (current.loadScreenIndex == "18" && current.levelId == 18 && current.isLoad == true)
+			if (current.loadScreenIndex == "18" && current.levelId == 18 && current.isLoad == 1)
 			{
 				return true;
 			}
 		}
 		else if (settings["reservoir"])
 		{
-			if (current.loadScreenIndex == "19" && current.levelId == 19 && current.isLoad == true)
+			if (current.loadScreenIndex == "19" && current.levelId == 19 && current.isLoad == 1)
 			{
 				return true;
 			}
 		}
 		else if (settings["scrubPens"])
 		{
-			if (current.loadScreenIndex == "20" && current.levelId == 20 && current.isLoad == true)
+			if (current.loadScreenIndex == "20" && current.levelId == 20 && current.isLoad == 1)
 			{
 				return true;
 			}
 		}
 		else if (settings["flubco"])
 		{
-			if (current.loadScreenIndex == "21" && current.levelId == 21 && current.isLoad == true)
+			if (current.loadScreenIndex == "21" && current.levelId == 21 && current.isLoad == 1)
 			{
 				return true;
 			}
 		}
 		else if (settings["dockBad"] || settings["dockGood"])
 		{
-			if (current.loadScreenIndex == "22" && current.levelId == 22 && current.isLoad == true)
+			if (current.loadScreenIndex == "22" && current.levelId == 22 && current.isLoad == 1)
 			{
 				return true;
 			}
 		}
 		else if (settings["labor"])
 		{
-			if (current.loadScreenIndex == "23" && current.levelId == 23 && current.isLoad == true)
+			if (current.loadScreenIndex == "23" && current.levelId == 23 && current.isLoad == 1)
 			{
 				return true;
 			}
 		}
 		else if (settings["vykker"])
 		{
-			if (current.loadScreenIndex == "24" && current.levelId == 23 && current.isLoad == true)
+			if (current.loadScreenIndex == "24" && current.levelId == 23 && current.isLoad == 1)
 			{
 				return true;
 			}
@@ -494,154 +494,154 @@ split
 		}
 		else if (settings["spooce"])
 		{
-			if (current.levelId == 1)
+			if (current.levelId == 2)
 			{
 				return true;
 			}
 		}
 		else if (settings["fuzzle"])
 		{
-			if (current.levelId == 1)
+			if (current.levelId == 3)
 			{
 				return true;
 			}
 		}
 		else if (settings["hydro"])
 		{
-			if (current.levelId == 1)
+			if (current.levelId == 4)
 			{
 				return true;
 			}
 		}
 		else if (settings["fluoride"])
 		{
-			if (current.levelId == 1)
+			if (current.levelId == 5)
 			{
 				return true;
 			}
 		}
 		else if (settings["snoozie"])
 		{
-			if (current.levelId == 1)
+			if (current.levelId == 6)
 			{
 				return true;
 			}
 		}
 		else if (settings["mudPens"])
 		{
-			if (current.levelId == 1)
+			if (current.levelId == 7)
 			{
 				return true;
 			}
 		}
 		else if (settings["slogOne"])
 		{
-			if (current.levelId == 1)
+			if (current.levelId == 8)
 			{
 				return true;
 			}
 		}
 		else if (settings["fortress"])
 		{
-			if (current.levelId == 1)
+			if (current.levelId == 9)
 			{
 				return true;
 			}
 		}
 		else if (settings["slogTwo"])
 		{
-			if (current.levelId == 1)
+			if (current.levelId == 10)
 			{
 				return true;
 			}
 		}
 		else if (settings["paramite"])
 		{
-			if (current.levelId == 1)
+			if (current.levelId == 11)
 			{
 				return true;
 			}
 		}
 		else if (settings["meep"])
 		{
-			if (current.levelId == 1)
+			if (current.levelId == 12)
 			{
 				return true;
 			}
 		}
 		else if (settings["brewery"])
 		{
-			if (current.levelId == 1)
+			if (current.levelId == 13)
 			{
 				return true;
 			}
 		}
 		else if (settings["fuel"])
 		{
-			if (current.levelId == 1)
+			if (current.levelId == 14)
 			{
 				return true;
 			}
 		}
 		else if (settings["magog"])
 		{
-			if (current.levelId == 1)
+			if (current.levelId == 15)
 			{
 				return true;
 			}
 		}
 		else if (settings["river"])
 		{
-			if (current.levelId == 1)
+			if (current.levelId == 16)
 			{
 				return true;
 			}
 		}
 		else if (settings["noMuds"])
 		{
-			if (current.levelId == 1)
+			if (current.levelId == 17)
 			{
 				return true;
 			}
 		}
 		else if (settings["boiler"])
 		{
-			if (current.levelId == 1)
+			if (current.levelId == 18)
 			{
 				return true;
 			}
 		}
 		else if (settings["splinter"])
 		{
-			if (current.levelId == 1)
+			if (current.levelId == 19)
 			{
 				return true;
 			}
 		}
 		else if (settings["reservoir"])
 		{
-			if (current.levelId == 1)
+			if (current.levelId == 20)
 			{
 				return true;
 			}
 		}
 		else if (settings["scrubPens"])
 		{
-			if (current.levelId == 1)
+			if (current.levelId == 21)
 			{
 				return true;
 			}
 		}
 		else if (settings["flubco"])
 		{
-			if (current.levelId == 1)
+			if (current.levelId == 22)
 			{
 				return true;
 			}
 		}
 		else if (settings["dockGood"])
 		{
-			if (current.levelId == 1)
+			if (current.levelId == 23)
 			{
 				return true;
 			}
