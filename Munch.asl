@@ -9,6 +9,16 @@ state("Munch", "v1.0.0 20-02-2021 wjb1114#8967")
 startup {
 	// script startup
 	
+	// legal vars
+	vars.You_can_show_the_following_variables_on_runs = "Ahh, I see!";
+	vars.IGT = "";
+	vars.RTA = "";
+	vars.IGTandRTAInline = vars.RTA + " | " + vars.IGT;
+	
+	vars.____________________________________ = "Ignore this.";
+	vars.You_can_NOT_show_the_following_variables_on_runs = "Only the 3 above ones can be used.";
+	
+	// illegal vars
 	vars.curLvl = -1;
 	vars.executiveFix = false;
 	vars.gameCrashed = false;
@@ -17,8 +27,7 @@ startup {
 	vars.loading = false;
 	vars.trueLoad = false;
 	vars.loadingFix = false;
-	vars.IGT = "";
-	vars.RTA = "";
+	
 
 	settings.Add("nag", true, "REFRESH RATE OF THE AUTOSPLITTER");
 	settings.SetToolTip("nag", "Sets the autosplitter to refresh 30 times per second. Leaving all options unckeched will set refresh rate to 30 by default anyway.");
@@ -142,18 +151,17 @@ init
 	
 	// Note: for testing/development onnly. Using the debug var viewer WILL invalidate your run!
 	vars.debugVars = "levelId: " + current.levelId + " | isLoad: " + current.isLoad + " | gameState: " + current.gameState + " | curLvl: " + vars.curLvl + " | old levelId: " + old.levelId + " | lsi: |" + current.loadScreenIndex + "|";
-	vars.gameVars = "RTA: " + vars.RTA + " | IGT: " + vars.IGT;
 }
 
 
 
 update
 {
-	vars.RTA = "[" + System.Convert.ToString(timer.CurrentTime.RealTime).Replace("0000", "").Replace("00:", "") + "]";
-	vars.IGT = "[" + System.Convert.ToString(timer.CurrentTime.GameTime).Replace("0000", "").Replace("00:", "") + "]";
+	vars.RTA = "RTA: [" + System.Convert.ToString(timer.CurrentTime.RealTime).Replace("0000", "").Replace("00:", "") + "]";
+	vars.IGT = "IGT: [" + System.Convert.ToString(timer.CurrentTime.GameTime).Replace("0000", "").Replace("00:", "") + "]";
 	// Note: for testing/development onnly. Using the debug var viewer WILL invalidate your run!
 	vars.debugVars = "levelId: " + current.levelId + " | isLoad: " + current.isLoad + " | gameState: " + current.gameState + " | curLvl: " + vars.curLvl + " | old levelId: " + old.levelId + " | lsi: |" + current.loadScreenIndex + "|";
-	vars.gameVars = "RTA: " + vars.RTA + " | IGT: " + vars.IGT;
+	vars.IGTandRTAInline = vars.RTA + " | " + vars.IGT;
 	
 	if (vars.gameCrashed == true)
 	{
