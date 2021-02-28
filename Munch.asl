@@ -1,9 +1,10 @@
-state("Munch", "v1.0.0 20-02-2021 wjb1114#8967")
+state("Munch", "v2.1.1 25-02-2021 wjb1114#8967 and LegnaX#7777")
 {
 	byte levelId : 0x332188;
 	byte isLoad : 0x318351;
 	byte gameState : 0x35AF64;
-	string2 loadScreenIndex : 0x358587;
+	string2 loadScreenIndex : 0x358587;	
+	int gnFrame : 0x354318;
 }
 
 startup {
@@ -11,9 +12,11 @@ startup {
 	
 	// legal vars
 	vars.You_can_show_the_following_variables_on_runs = "Ahh, I see!";
-	vars.IGT = "";
-	vars.RTA = "";
-	vars.IGTandRTAInline = vars.RTA + " | " + vars.IGT;
+	vars.IGT = "Ingame timer will be displayed here";
+	vars.RTA = "Real time will be displayed here";
+	vars.IGTandRTAInline = "Both timers will be displayed here.";
+	
+	// 'legal' vars (for now)
 	
 	vars.____________________________________ = "Ignore this.";
 	vars.You_can_NOT_show_the_following_variables_on_runs = "Only the 3 above ones can be used.";
@@ -26,8 +29,20 @@ startup {
 	vars.crashLastLvl = -1;
 	vars.loading = false;
 	vars.trueLoad = false;
-	vars.loadingFix = false;
-	
+	vars.loadingFix = false;		
+	vars.StartgnFrame = 0;
+	vars.GNFrame = 0;
+	vars.Epoch = 0;
+	vars.MillisecondsPaused = 0;
+	vars.PauseStartTime = -1;
+	vars.fps = 60; // FPS of the game. OBVIOUSLY 60! It can be seen on the FUCKING GAME!!
+	vars.GNFrameWhenPaused = 0;
+	vars.EpochQS = 0;
+	vars.TimeSpentQuiksaving = "";
+	vars.TSQ = 0;
+	vars.QuikSaveTime = 2900; // Milliseconds added after every quiksave. This SHOULD NOT be modified unless a new amount is agreeded between the moderators. Seriously: touch this and you are literally cheating on the game. You have been warned.
+	vars.EpochExtraQS = 0; // This is used when vars.QuikSaveTime pass after the quiksave. It will register the epoch after the vars.QuikSaveTime and then substract it from the load time. (Hybrid mode).
+	vars.ThisIsNOTAFuckingCinematic = false; // 
 
 	settings.Add("nag", true, "REFRESH RATE OF THE AUTOSPLITTER");
 	settings.SetToolTip("nag", "Sets the autosplitter to refresh 30 times per second. Leaving all options unckeched will set refresh rate to 30 by default anyway.");
@@ -47,8 +62,17 @@ startup {
 	settings.Add("120Rate", false, "120 refreshes per second", "nag");
 	settings.SetToolTip("120Rate", "Sets the autosplitter to refresh 120 times per second. R U crazy or wut m8?");	
 	
-	settings.Add("anyPercent", true, "Bad Ending");
-	settings.SetToolTip("anyPercent", "Ends the run on the Bad Ending cutscene at the end of Loading Dock. Ensure that IL mode and Good Ending are disabled!");
+	settings.Add("500Rate", false, "500 refreshes per second (TESTS ONLY)", "nag");
+	settings.SetToolTip("500Rate", "Sets the autosplitter to refresh 500 times per second. Computer will cry.");	
+	
+	settings.Add("1000Rate", false, "1000 refreshes per second (TESTS ONLY)", "nag");
+	settings.SetToolTip("1000Rate", "Sets the autosplitter to refresh 1000 times per second. This is a bad idea.");	
+	
+	settings.Add("anyPercent", false, "Any% (No FPS cap)");
+	settings.SetToolTip("anyPercent", "Use this option ONLY when doing full game runs or ILs on Any% (no 60FPS).");
+	
+	settings.Add("badEnding", true, "Bad Ending");
+	settings.SetToolTip("badEnding", "Ends the run on the Bad Ending cutscene at the end of Loading Dock. Ensure that IL mode and Good Ending are disabled!");
 	
 	settings.Add("hundredPercent", false, "Good Ending");
 	settings.SetToolTip("hundredPercent", "Ends the run on the Good Ending cutscene at the end of Vykkers Suites. Ensure that IL mode and Bad Ending are disabled!");
@@ -141,7 +165,7 @@ init
 {
 	// game startup
 	
-	version = "1.0 31-01-2021 wjb1114#8967";
+	version = "v2.11 wjb1114#8967  25-02-21 (Hybrid)";
 	
 	if (vars.curLvl != -1)
 	{
@@ -157,11 +181,11 @@ init
 
 update
 {
-	vars.RTA = "RTA: [" + System.Convert.ToString(timer.CurrentTime.RealTime).Replace("0000", "").Replace("00:", "") + "]";
-	vars.IGT = "IGT: [" + System.Convert.ToString(timer.CurrentTime.GameTime).Replace("0000", "").Replace("00:", "") + "]";
+	// vars.RTA = "RTA: [" + System.Convert.ToString(timer.CurrentTime.RealTime).Replace("0000", "").Replace("00:", "") + "]";
+	// vars.IGT = "IGT: [" + System.Convert.ToString(timer.CurrentTime.GameTime).Replace("0000", "").Replace("00:", "") + "]";
 	// Note: for testing/development onnly. Using the debug var viewer WILL invalidate your run!
 	vars.debugVars = "levelId: " + current.levelId + " | isLoad: " + current.isLoad + " | gameState: " + current.gameState + " | curLvl: " + vars.curLvl + " | old levelId: " + old.levelId + " | lsi: |" + current.loadScreenIndex + "|";
-	vars.IGTandRTAInline = vars.RTA + " | " + vars.IGT;
+	// vars.IGTandRTAInline = vars.RTA + " | " + vars.IGT;
 	
 	if (vars.gameCrashed == true)
 	{
@@ -176,12 +200,12 @@ update
 		}
 	}
 	
-	if (current.isLoad == 1 && old.isLoad == 0)
+	if (current.isLoad == 1 && old.isLoad == 0 && settings["anyPercent"])
 	{
 		vars.loading = true;
 	}
 	
-	if (vars.loading == true && current.gameState != 0 && current.gameState != 5)
+	if (vars.loading == true && current.gameState != 0 && current.gameState != 5 && settings["anyPercent"])
 	{
 		vars.trueLoad = true;
 	}
@@ -196,7 +220,7 @@ update
 		vars.curLvl = current.levelId;
 	}
 	
-	if (vars.loading == true && vars.trueLoad == true && current.isLoad == 0)
+	if (vars.loading == true && vars.trueLoad == true && current.isLoad == 0 && settings["anyPercent"])
 	{
 		vars.loading = false;
 		vars.trueLoad = false;
@@ -212,6 +236,7 @@ update
 
 start
 {
+	bool IStart = false;
 	if (settings["ilMode"] == false)
 	{
 		if ((current.gameState == 9) && (old.gameState == 13))
@@ -220,7 +245,7 @@ start
 			vars.raisinFix = true;
 			vars.loading = false;
 			vars.trueLoad = false;
-			return true;
+			IStart = true;
 		}
 	}
 	else
@@ -233,154 +258,154 @@ start
 				vars.raisinFix = true;
 				vars.loading = false;
 				vars.trueLoad = false;
-				return true;
+				IStart = true;
 			}
 		}
 		else if (settings["spooce"])
 		{
 			if (current.loadScreenIndex == "1" && current.levelId == 1 && current.isLoad == 1)
 			{
-				return true;
+				IStart = true;
 			}
 		}
 		else if (settings["fuzzle"])
 		{
 			if (current.loadScreenIndex == "2" && current.levelId == 2 && current.isLoad == 1)
 			{
-				return true;
+				IStart = true;
 			}
 		}
 		else if (settings["hydro"])
 		{
 			if (current.loadScreenIndex == "3" && current.levelId == 3 && current.isLoad == 1)
 			{
-				return true;
+				IStart = true;
 			}
 		}
 		else if (settings["fluoride"])
 		{
 			if (current.loadScreenIndex == "4" && current.levelId == 4 && current.isLoad == 1)
 			{
-				return true;
+				IStart = true;
 			}
 		}
 		else if (settings["snoozie"])
 		{
 			if (current.loadScreenIndex == "5" && current.levelId == 5 && current.isLoad == 1)
 			{
-				return true;
+				IStart = true;
 			}
 		}
 		else if (settings["mudPens"])
 		{
 			if (current.loadScreenIndex == "6" && current.levelId == 6 && current.isLoad == 1)
 			{
-				return true;
+				IStart = true;
 			}
 		}
 		else if (settings["slogOne"])
 		{
 			if (current.loadScreenIndex == "7" && current.levelId == 7 && current.isLoad == 1)
 			{
-				return true;
+				IStart = true;
 			}
 		}
 		else if (settings["fortress"])
 		{
 			if (current.loadScreenIndex == "8" && current.levelId == 8 && current.isLoad == 1)
 			{
-				return true;
+				IStart = true;
 			}
 		}
 		else if (settings["slogTwo"])
 		{
 			if (current.loadScreenIndex == "9" && current.levelId == 9 && current.isLoad == 1)
 			{
-				return true;
+				IStart = true;
 			}
 		}
 		else if (settings["paramite"])
 		{
 			if (current.loadScreenIndex == "10" && current.levelId == 10 && current.isLoad == 1)
 			{
-				return true;
+				IStart = true;
 			}
 		}
 		else if (settings["meep"])
 		{
 			if (current.loadScreenIndex == "11" && current.levelId == 11 && current.isLoad == 1)
 			{
-				return true;
+				IStart = true;
 			}
 		}
 		else if (settings["brewery"])
 		{
 			if (current.loadScreenIndex == "12" && current.levelId == 12 && current.isLoad == 1)
 			{
-				return true;
+				IStart = true;
 			}
 		}
 		else if (settings["fuel"])
 		{
 			if (current.loadScreenIndex == "13" && current.levelId == 13 && current.isLoad == 1)
 			{
-				return true;
+				IStart = true;
 			}
 		}
 		else if (settings["magog"])
 		{
 			if (current.loadScreenIndex == "14" && current.levelId == 14 && current.isLoad == 1)
 			{
-				return true;
+				IStart = true;
 			}
 		}
 		else if (settings["river"])
 		{
 			if (current.loadScreenIndex == "15" && current.levelId == 15 && current.isLoad == 1)
 			{
-				return true;
+				IStart = true;
 			}
 		}
 		else if (settings["noMuds"])
 		{
 			if (current.loadScreenIndex == "16" && current.levelId == 16 && current.isLoad == 1)
 			{
-				return true;
+				IStart = true;
 			}
 		}
 		else if (settings["boiler"])
 		{
 			if (current.loadScreenIndex == "17" && current.levelId == 17 && current.isLoad == 1)
 			{
-				return true;
+				IStart = true;
 			}
 		}
 		else if (settings["splinter"])
 		{
 			if (current.loadScreenIndex == "18" && current.levelId == 18 && current.isLoad == 1)
 			{
-				return true;
+				IStart = true;
 			}
 		}
 		else if (settings["reservoir"])
 		{
 			if (current.loadScreenIndex == "19" && current.levelId == 19 && current.isLoad == 1)
 			{
-				return true;
+				IStart = true;
 			}
 		}
 		else if (settings["scrubPens"])
 		{
 			if (current.loadScreenIndex == "20" && current.levelId == 20 && current.isLoad == 1)
 			{
-				return true;
+				IStart = true;
 			}
 		}
 		else if (settings["flubco"])
 		{
 			if (current.loadScreenIndex == "21" && current.levelId == 21 && current.isLoad == 1)
 			{
-				return true;
+				IStart = true;
 			}
 		}
 		else if (settings["dockBad"] || settings["dockGood"])
@@ -395,14 +420,14 @@ start
 			}
 			if (current.loadScreenIndex == "22" && current.levelId == 22 && current.isLoad == 1)
 			{
-				return true;
+				IStart = true;
 			}
 		}
 		else if (settings["labor"])
 		{
 			if (current.loadScreenIndex == "23" && current.levelId == 23 && current.isLoad == 1)
 			{
-				return true;
+				IStart = true;
 			}
 		}
 		else if (settings["vykker"])
@@ -410,18 +435,61 @@ start
 			if (current.loadScreenIndex == "24" && current.levelId == 23 && current.isLoad == 1)
 			{
 				vars.vykkerFix = true;
-				return true;
+				IStart = true;
 			}
 		}
+	}
+	if (IStart){		
+		vars.StartgnFrame = current.gnFrame;		
+		vars.PauseStartTime = -1;
+		vars.MillisecondsPaused = 0;
+		vars.PreviousTime = 0;
+		vars.EpochQS = 0;
+		return true;
 	}
 }
 
 split
 {
 
+	if (current.gameState == 5 || current.gameState == 9){ // If the game is paused...
+		vars.Epoch = (DateTime.UtcNow.Ticks - 621355968000000000) / 10000;
+		if (vars.PauseStartTime == -1){ // Paused for the first time.
+			vars.PauseStartTime = vars.Epoch;
+			vars.GNFrameWhenPaused = current.gnFrame;
+		}		
+		
+	} else {		
+	
+		if (vars.PauseStartTime > 0){ // Unpaused for the first time.
+			if (vars.TSQ <= vars.QuikSaveTime && vars.TSQ >= (vars.QuikSaveTime / 2)) {
+				vars.MillisecondsPaused = vars.MillisecondsPaused + (vars.Epoch - vars.PauseStartTime);
+			} else if (vars.TSQ > (vars.QuikSaveTime / 2)) { // If this was a quiksave
+										   // Total paused time.          Add new paused time.             Remove extra QS milliseconds.
+				vars.MillisecondsPaused = vars.MillisecondsPaused + (vars.Epoch - vars.PauseStartTime) - (vars.Epoch - vars.EpochExtraQS);
+			} else {                        
+											// Total paused time.          Add new paused time.				
+				vars.MillisecondsPaused = vars.MillisecondsPaused + (vars.Epoch - vars.PauseStartTime);
+			}
+			if (vars.TSQ >= 170 && vars.TSQ <= 300) { // If we did a QuikLoad, we will remove the Quikload time from the Loadless time.
+				vars.MillisecondsPaused = vars.MillisecondsPaused - vars.TSQ; // TSQ = Time Spent Quiksaving, or in this case, Quikloading.
+			}
+			vars.PauseStartTime = -1;
+			vars.StartgnFrame = vars.StartgnFrame + (current.gnFrame - vars.GNFrameWhenPaused);
+			vars.TSQ = 0;
+			vars.EpochExtraQS = 0;
+		}
+		
+	}
+
 	// Refresh rate (dinamically adjustable frame rate)
+	refreshRate = 30;
 	if (settings["nag"]){	
-		if (settings["120Rate"]){
+		if (settings["1000Rate"]){
+			refreshRate = 1000;
+		} else if (settings["500Rate"]){
+			refreshRate = 500;
+		} else if (settings["120Rate"]){
 			refreshRate = 120;
 		} else if (settings["90Rate"]){
 			refreshRate = 90;
@@ -429,17 +497,13 @@ split
 			refreshRate = 60;
 		} else if (settings["10Rate"]){
 			refreshRate = 10;
-		} else {
-			refreshRate = 30;	
 		}
-	} else {	
-		refreshRate = 30;
 	}
 	
 	// Splits
 	if (settings["ilMode"] == false)
 	{
-		if (settings["anyPercent"])
+		if (settings["badEnding"])
 		{
 			if(current.levelId == (old.levelId + 1) || (current.levelId > old.levelId && old.levelId == 0 && vars.curLvl == (current.levelId - 1)))
 			{
@@ -714,19 +778,91 @@ split
 }
 
 isLoading
-{
-	if ((current.isLoad == 1) && (old.isLoad == 0))
-	{
-		return true;
+{	
+	if (current.gameState == 9 && old.gameState == 5){
+		vars.ThisIsNOTAFuckingCinematic = true;
+	} else if ((current.gameState < 9 || current.gameState > 9) && vars.ThisIsNOTAFuckingCinematic) {
+		vars.ThisIsNOTAFuckingCinematic = false;
 	}
-	else if ((current.isLoad == 1) && (old.isLoad == 1))
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	
+	if  (settings["anyPercent"]) {
+		if ((current.isLoad == 1) && (old.isLoad == 0))
+		{
+			return true;
+		}
+		else if ((current.isLoad == 1) && (old.isLoad == 1))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+			
+	} else { // Uses gnFRAME to calculate the game time!! This is so EPIC!!!!!!!1!!1oneoneONE!!	
+		
+		int gnFrame = current.gnFrame;
+		
+		if ((current.gameState == 5 || vars.ThisIsNOTAFuckingCinematic == true) && old.gnFrame == current.gnFrame) {
+			if (vars.EpochQS > 0){
+				vars.TSQ = ((DateTime.UtcNow.Ticks - 621355968000000000) / 10000) - vars.EpochQS;
+			}
+			vars.TimeSpentQuiksaving = vars.TSQ + "ms";
+		}
+		else if ((current.gameState == 5 || vars.ThisIsNOTAFuckingCinematic == true) && old.gnFrame < current.gnFrame && vars.GNFrame > 10) {
+			vars.EpochQS = (DateTime.UtcNow.Ticks - 621355968000000000) / 10000;
+		} else if (vars.EpochQS > 0 && current.gameState == 0){
+			if (vars.TSQ > 50) { // This was definitely a quiksave.
+				
+				if (vars.TSQ >= vars.QuikSaveTime) { // This should ALWAYS happen, unless the quiksave of this runner is like, awesome good.
+					// I can add a check here that verifies the time spent quiksaving.
+				} else { // Very weird.
+					// I can add a check here that verifies the time spent quiksaving.
+				}
+				vars.TimeSpentQuiksaving = vars.TSQ + "ms";
+			}
+			vars.EpochQS = 0;
+		}
+		if (vars.StartgnFrame == 0) {
+			vars.StartgnFrame = current.gnFrame;
+		}
+		
+		if (gnFrame > 0) {
+			if (current.gameState == 5 || vars.ThisIsNOTAFuckingCinematic){ // if the game is paused...
+				
+				vars.RTA = TimeSpan.Parse(System.Convert.ToString(timer.CurrentTime.RealTime)).ToString(@"h\:mm\:ss\.fff");
+				vars.GNFrame = gnFrame - vars.StartgnFrame;
+				if (vars.TSQ < vars.QuikSaveTime) { // We only update the timer if the TSQ is less than the QuikSaveTime.
+					vars.IGT = TimeSpan.FromMilliseconds(((vars.GNFrameWhenPaused - vars.StartgnFrame) * 1000 / vars.fps) + vars.MillisecondsPaused + (vars.Epoch - vars.PauseStartTime)).ToString(@"h\:mm\:ss\.fff");
+				}
+				vars.IGTandRTAInline = "Real time = " + vars.RTA + " \nLoadless time = " + vars.IGT;
+				if ((TimeSpan.FromMilliseconds(((gnFrame - vars.StartgnFrame) * 1000 / vars.fps) + vars.MillisecondsPaused + (vars.Epoch - vars.PauseStartTime)).TotalMilliseconds) < (timer.CurrentTime.GameTime.Value.TotalSeconds * 1000)){ // Is the ingame timer bigger than the gnFrame timer? We will pause it this frame.
+					return true;
+				} else {					
+					if (vars.TSQ >= vars.QuikSaveTime) { // The current quiksaving time exceeds the quiksave time = we pause the timer.
+						if (vars.EpochExtraQS == 0){
+							vars.EpochExtraQS = (DateTime.UtcNow.Ticks - 621355968000000000) / 10000; // This is the point where the timer exceeded for the first time.
+						}
+						return true;						
+					} else { // We are good. The timer can continue.
+						return false;
+					}
+				}
+			} else {
+				vars.RTA = TimeSpan.Parse(System.Convert.ToString(timer.CurrentTime.RealTime)).ToString(@"h\:mm\:ss\.fff");
+				vars.GNFrame = gnFrame - vars.StartgnFrame;
+				vars.IGT = TimeSpan.FromMilliseconds(((vars.GNFrame) * 1000 / vars.fps) + vars.MillisecondsPaused).ToString(@"h\:mm\:ss\.fff");
+				vars.IGTandRTAInline = "Real time = " + vars.RTA + " \nLoadless time = " + vars.IGT;
+				if ((TimeSpan.FromMilliseconds(((gnFrame - vars.StartgnFrame) * 1000 / vars.fps) + vars.MillisecondsPaused).TotalMilliseconds) < (timer.CurrentTime.GameTime.Value.TotalSeconds * 1000)){ // Is the ingame timer bigger than the gnFrame timer? We will pause it this frame.
+					return true;
+				} else {
+					return false;
+				}
+			}
+		} else {
+			return true; // :shrug: 
+		}		
+	}	
 }
 
 reset
