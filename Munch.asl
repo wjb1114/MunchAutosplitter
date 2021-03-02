@@ -830,12 +830,12 @@ isLoading
 		if (gnFrame > 0) {
 			if (current.gameState == 5 || vars.ThisIsNOTAFuckingCinematic){ // if the game is paused...
 				
-				vars.RTA = TimeSpan.Parse(System.Convert.ToString(timer.CurrentTime.RealTime)).ToString(@"h\:mm\:ss\.fff");
+				vars.RTA = "Real Time = " + TimeSpan.Parse(System.Convert.ToString(timer.CurrentTime.RealTime)).ToString(@"h\:mm\:ss\.fff");
 				vars.GNFrame = gnFrame - vars.StartgnFrame;
 				if (vars.TSQ < vars.QuikSaveTime) { // We only update the timer if the TSQ is less than the QuikSaveTime.
-					vars.IGT = TimeSpan.FromMilliseconds(((vars.GNFrameWhenPaused - vars.StartgnFrame) * 1000 / vars.fps) + vars.MillisecondsPaused + (vars.Epoch - vars.PauseStartTime)).ToString(@"h\:mm\:ss\.fff");
+					vars.IGT = "Loadless Time = " + TimeSpan.FromMilliseconds(((vars.GNFrameWhenPaused - vars.StartgnFrame) * 1000 / vars.fps) + vars.MillisecondsPaused + (vars.Epoch - vars.PauseStartTime)).ToString(@"h\:mm\:ss\.fff");
 				}
-				vars.IGTandRTAInline = "Real time = " + vars.RTA + " \nLoadless time = " + vars.IGT;
+				vars.IGTandRTAInline = vars.RTA + "\n" + vars.IGT;
 				if ((TimeSpan.FromMilliseconds(((gnFrame - vars.StartgnFrame) * 1000 / vars.fps) + vars.MillisecondsPaused + (vars.Epoch - vars.PauseStartTime)).TotalMilliseconds) < (timer.CurrentTime.GameTime.Value.TotalSeconds * 1000)){ // Is the ingame timer bigger than the gnFrame timer? We will pause it this frame.
 					return true;
 				} else {					
@@ -849,10 +849,10 @@ isLoading
 					}
 				}
 			} else {
-				vars.RTA = TimeSpan.Parse(System.Convert.ToString(timer.CurrentTime.RealTime)).ToString(@"h\:mm\:ss\.fff");
+				vars.RTA = "Real Time = " + TimeSpan.Parse(System.Convert.ToString(timer.CurrentTime.RealTime)).ToString(@"h\:mm\:ss\.fff");
 				vars.GNFrame = gnFrame - vars.StartgnFrame;
-				vars.IGT = TimeSpan.FromMilliseconds(((vars.GNFrame) * 1000 / vars.fps) + vars.MillisecondsPaused).ToString(@"h\:mm\:ss\.fff");
-				vars.IGTandRTAInline = "Real time = " + vars.RTA + " \nLoadless time = " + vars.IGT;
+				vars.IGT = "Loadless Time = " + TimeSpan.FromMilliseconds(((vars.GNFrame) * 1000 / vars.fps) + vars.MillisecondsPaused).ToString(@"h\:mm\:ss\.fff");
+				vars.IGTandRTAInline = vars.RTA + "\n" + vars.IGT;
 				if ((TimeSpan.FromMilliseconds(((gnFrame - vars.StartgnFrame) * 1000 / vars.fps) + vars.MillisecondsPaused).TotalMilliseconds) < (timer.CurrentTime.GameTime.Value.TotalSeconds * 1000)){ // Is the ingame timer bigger than the gnFrame timer? We will pause it this frame.
 					return true;
 				} else {
