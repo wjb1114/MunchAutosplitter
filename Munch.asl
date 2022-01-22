@@ -1,4 +1,4 @@
-state("Munch", "v2.1.1 25-02-2021 wjb1114#8967 and LegnaX#7777")
+state("Munch", "v2.1.2 22-01-2022 wjb1114#8967 and LegnaX#7777")
 {
 	byte levelId : 0x332188;
 	byte isLoad : 0x318351;
@@ -35,7 +35,6 @@ startup {
 	vars.Epoch = 0;
 	vars.MillisecondsPaused = 0;
 	vars.PauseStartTime = -1;
-	vars.fps = 60; // FPS of the game. OBVIOUSLY 60! It can be seen on the FUCKING GAME!!
 	vars.GNFrameWhenPaused = 0;
 	vars.EpochQS = 0;
 	vars.TimeSpentQuiksaving = "";
@@ -67,9 +66,6 @@ startup {
 	
 	settings.Add("1000Rate", false, "1000 refreshes per second (TESTS ONLY)", "nag");
 	settings.SetToolTip("1000Rate", "Sets the autosplitter to refresh 1000 times per second. This is a bad idea.");	
-	
-	settings.Add("anyPercent", false, "Any% (No FPS cap)");
-	settings.SetToolTip("anyPercent", "Use this option ONLY when doing full game runs or ILs on Any% (no 60FPS).");
 	
 	settings.Add("badEnding", true, "Bad Ending");
 	settings.SetToolTip("badEnding", "Ends the run on the Bad Ending cutscene at the end of Loading Dock. Ensure that IL mode and Good Ending are disabled!");
@@ -165,7 +161,7 @@ init
 {
 	// game startup
 	
-	version = "v2.11 wjb1114#8967  25-02-21 (Hybrid)";
+	version = "v2.12 wjb1114#8967  22-01-22 (Hybrid)";
 	
 	if (vars.curLvl != -1)
 	{
@@ -181,11 +177,20 @@ init
 
 update
 {
-	// vars.RTA = "RTA: [" + System.Convert.ToString(timer.CurrentTime.RealTime).Replace("0000", "").Replace("00:", "") + "]";
-	// vars.IGT = "IGT: [" + System.Convert.ToString(timer.CurrentTime.GameTime).Replace("0000", "").Replace("00:", "") + "]";
+	//vars.RTA = "RTA: [" + System.Convert.ToString(timer.CurrentTime.RealTime).Replace("0000", "").Replace("00:", "") + "]";
+	//vars.IGT = "IGT: [" + System.Convert.ToString(timer.CurrentTime.GameTime).Replace("0000", "").Replace("00:", "") + "]";
 	// Note: for testing/development onnly. Using the debug var viewer WILL invalidate your run!
 	vars.debugVars = "levelId: " + current.levelId + " | isLoad: " + current.isLoad + " | gameState: " + current.gameState + " | curLvl: " + vars.curLvl + " | old levelId: " + old.levelId + " | lsi: |" + current.loadScreenIndex + "|";
-	// vars.IGTandRTAInline = vars.RTA + " | " + vars.IGT;
+	//vars.IGTandRTAInline = vars.RTA + " | " + vars.IGT;
+	
+	vars.RTA = "Real Time = " + TimeSpan.Parse(System.Convert.ToString(timer.CurrentTime.RealTime)).ToString(@"h\:mm\:ss\.fff");
+	if (timer.CurrentTime.GameTime != null) {
+		vars.IGT = "Loadless Time = " + TimeSpan.Parse(System.Convert.ToString(timer.CurrentTime.GameTime.Value)).ToString(@"h\:mm\:ss\.fff");
+	} else {
+		vars.IGT = "Loadless Time = N/A";
+	}
+	
+	vars.IGTandRTAInline = vars.RTA + "\n" + vars.IGT;
 	
 	if (vars.gameCrashed == true)
 	{
@@ -200,12 +205,12 @@ update
 		}
 	}
 	
-	if (current.isLoad == 1 && old.isLoad == 0 && settings["anyPercent"])
+	if (current.isLoad == 1 && old.isLoad == 0)
 	{
 		vars.loading = true;
 	}
 	
-	if (vars.loading == true && current.gameState != 0 && current.gameState != 5 && settings["anyPercent"])
+	if (vars.loading == true && current.gameState != 0 && current.gameState != 5)
 	{
 		vars.trueLoad = true;
 	}
@@ -220,7 +225,7 @@ update
 		vars.curLvl = current.levelId;
 	}
 	
-	if (vars.loading == true && vars.trueLoad == true && current.isLoad == 0 && settings["anyPercent"])
+	if (vars.loading == true && vars.trueLoad == true && current.isLoad == 0)
 	{
 		vars.loading = false;
 		vars.trueLoad = false;
@@ -785,84 +790,18 @@ isLoading
 		vars.ThisIsNOTAFuckingCinematic = false;
 	}
 	
-	if  (settings["anyPercent"]) {
-		if ((current.isLoad == 1) && (old.isLoad == 0))
-		{
-			return true;
-		}
-		else if ((current.isLoad == 1) && (old.isLoad == 1))
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-			
-	} else { // Uses gnFRAME to calculate the game time!! This is so EPIC!!!!!!!1!!1oneoneONE!!	
-		
-		int gnFrame = current.gnFrame;
-		
-		if ((current.gameState == 5 || vars.ThisIsNOTAFuckingCinematic == true) && old.gnFrame == current.gnFrame) {
-			if (vars.EpochQS > 0){
-				vars.TSQ = ((DateTime.UtcNow.Ticks - 621355968000000000) / 10000) - vars.EpochQS;
-			}
-			vars.TimeSpentQuiksaving = vars.TSQ + "ms";
-		}
-		else if ((current.gameState == 5 || vars.ThisIsNOTAFuckingCinematic == true) && old.gnFrame < current.gnFrame && vars.GNFrame > 10) {
-			vars.EpochQS = (DateTime.UtcNow.Ticks - 621355968000000000) / 10000;
-		} else if (vars.EpochQS > 0 && current.gameState == 0){
-			if (vars.TSQ > 50) { // This was definitely a quiksave.
-				
-				if (vars.TSQ >= vars.QuikSaveTime) { // This should ALWAYS happen, unless the quiksave of this runner is like, awesome good.
-					// I can add a check here that verifies the time spent quiksaving.
-				} else { // Very weird.
-					// I can add a check here that verifies the time spent quiksaving.
-				}
-				vars.TimeSpentQuiksaving = vars.TSQ + "ms";
-			}
-			vars.EpochQS = 0;
-		}
-		if (vars.StartgnFrame == 0) {
-			vars.StartgnFrame = current.gnFrame;
-		}
-		
-		if (gnFrame > 0) {
-			if (current.gameState == 5 || vars.ThisIsNOTAFuckingCinematic){ // if the game is paused...
-				
-				vars.RTA = "Real Time = " + TimeSpan.Parse(System.Convert.ToString(timer.CurrentTime.RealTime)).ToString(@"h\:mm\:ss\.fff");
-				vars.GNFrame = gnFrame - vars.StartgnFrame;
-				if (vars.TSQ < vars.QuikSaveTime) { // We only update the timer if the TSQ is less than the QuikSaveTime.
-					vars.IGT = "Loadless Time = " + TimeSpan.FromMilliseconds(((vars.GNFrameWhenPaused - vars.StartgnFrame) * 1000 / vars.fps) + vars.MillisecondsPaused + (vars.Epoch - vars.PauseStartTime)).ToString(@"h\:mm\:ss\.fff");
-				}
-				vars.IGTandRTAInline = vars.RTA + "\n" + vars.IGT;
-				if ((TimeSpan.FromMilliseconds(((gnFrame - vars.StartgnFrame) * 1000 / vars.fps) + vars.MillisecondsPaused + (vars.Epoch - vars.PauseStartTime)).TotalMilliseconds) < (timer.CurrentTime.GameTime.Value.TotalSeconds * 1000)){ // Is the ingame timer bigger than the gnFrame timer? We will pause it this frame.
-					return true;
-				} else {					
-					if (vars.TSQ >= vars.QuikSaveTime) { // The current quiksaving time exceeds the quiksave time = we pause the timer.
-						if (vars.EpochExtraQS == 0){
-							vars.EpochExtraQS = (DateTime.UtcNow.Ticks - 621355968000000000) / 10000; // This is the point where the timer exceeded for the first time.
-						}
-						return true;						
-					} else { // We are good. The timer can continue.
-						return false;
-					}
-				}
-			} else {
-				vars.RTA = "Real Time = " + TimeSpan.Parse(System.Convert.ToString(timer.CurrentTime.RealTime)).ToString(@"h\:mm\:ss\.fff");
-				vars.GNFrame = gnFrame - vars.StartgnFrame;
-				vars.IGT = "Loadless Time = " + TimeSpan.FromMilliseconds(((vars.GNFrame) * 1000 / vars.fps) + vars.MillisecondsPaused).ToString(@"h\:mm\:ss\.fff");
-				vars.IGTandRTAInline = vars.RTA + "\n" + vars.IGT;
-				if ((TimeSpan.FromMilliseconds(((gnFrame - vars.StartgnFrame) * 1000 / vars.fps) + vars.MillisecondsPaused).TotalMilliseconds) < (timer.CurrentTime.GameTime.Value.TotalSeconds * 1000)){ // Is the ingame timer bigger than the gnFrame timer? We will pause it this frame.
-					return true;
-				} else {
-					return false;
-				}
-			}
-		} else {
-			return true; // :shrug: 
-		}		
-	}	
+	if ((current.isLoad == 1) && (old.isLoad == 0))
+	{
+		return true;
+	}
+	else if ((current.isLoad == 1) && (old.isLoad == 1))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 reset
