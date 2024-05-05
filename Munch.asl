@@ -5,6 +5,14 @@ state("Munch", "v2.1.2 22-01-2022 wjb1114#8967 and LegnaX#7777")
 	byte gameState : 0x35AF64;
 	string2 loadScreenIndex : 0x358587;	
 	int gnFrame : 0x354318;
+	short fuzzle : 0x358994, 0x8, 0x4, 0x8, 0x0, 0x0, 0x1C;
+	short mudokon : 0x358994, 0x8, 0x4, 0x0, 0x8, 0x0, 0x1C;
+	short egg : 0x358994, 0x8, 0x0, 0x8, 0x8, 0x4, 0x8, 0x1C;
+	byte fuzzlelvl : 0x358994, 0x8, 0x4, 0x8, 0x0, 0x0, 0x14;
+	byte mudokonlvl : 0x358994, 0x8, 0x4, 0x0, 0x8, 0x0, 0x14;
+	byte egglvl : 0x358994, 0x8, 0x0, 0x8, 0x8, 0x4, 0x8, 0x14;
+	double lvltimer : 0x356CF8, 0x1C;
+	short mudokon2 : 0x78CF8, 0x94;
 }
 
 startup {
@@ -42,9 +50,45 @@ startup {
 	vars.QuikSaveTime = 2900; // Milliseconds added after every quiksave. This SHOULD NOT be modified unless a new amount is agreeded between the moderators. Seriously: touch this and you are literally cheating on the game. You have been warned.
 	vars.EpochExtraQS = 0; // This is used when vars.QuikSaveTime pass after the quiksave. It will register the epoch after the vars.QuikSaveTime and then substract it from the load time. (Hybrid mode).
 	vars.ThisIsNOTAFuckingCinematic = false; // 
+	vars.fuzzle = 0;
+	vars.mudokon = 0;
+	vars.egg = 0;
+	vars.total = 0;
+	vars.fuzzlemax = 0;
+	vars.mudokonmax = 0;
+	vars.eggmax = 0;
+	vars.totalmax = 0;
+	vars.fuzzlemem = 0;
+	vars.mudokonmem = 0;
+	vars.eggmem = 0;
+	vars.totalmem = 0;
+	vars.totalmem2 = 0;
+	vars.fuzzlememlvl = 0;
+	vars.mudokonmemlvl = 0;
+	vars.eggmemlvl = 0;
+	vars.stop = 0;
+	vars.stopcount = 0;
+	vars.level = 0;
+	vars.reset = 0;
+
+	settings.Add("badEnding", false, "Bad Ending");
+	settings.SetToolTip("badEnding", "Ends the run on the Bad Ending cutscene at the end of Loading Dock. Ensure that IL mode and Good Ending are disabled!");
+	
+	settings.Add("hundredPercent", false, "Good Ending");
+	settings.SetToolTip("hundredPercent", "Ends the run on the Good Ending cutscene at the end of Vykkers Suites. Ensure that IL mode and Bad Ending are disabled!");
+	
+	settings.Add("Counters", false, "Counters");
+	settings.SetToolTip("Counters", "Displays counters for Fuzzles, Mudokons, Eggs and total number rescued");
+	
+	settings.Add("ilMode", false, "IL Mode");
+	settings.SetToolTip("ilMode", "Enable IL mode. Ensure that both Good Ending and Bad Ending are disabled! Make sure to select the sub-option for the level you want to run.");
 
 	settings.Add("nag", true, "REFRESH RATE OF THE AUTOSPLITTER");
 	settings.SetToolTip("nag", "Sets the autosplitter to refresh 30 times per second. Leaving all options unckeched will set refresh rate to 30 by default anyway.");
+
+	//groups content
+
+	settings.CurrentDefaultParent = "nag";
 	
 	settings.Add("10Rate", false, "10 refreshes per second (potato mode ACTIVATED)", "nag");
 	settings.SetToolTip("10Rate", "Sets the autosplitter to refresh 10 times per second. Perfect for potato computers. Inaccurate times may happen.");
@@ -67,82 +111,13 @@ startup {
 	settings.Add("1000Rate", false, "1000 refreshes per second (TESTS ONLY)", "nag");
 	settings.SetToolTip("1000Rate", "Sets the autosplitter to refresh 1000 times per second. This is a bad idea.");	
 	
-	settings.Add("badEnding", true, "Bad Ending");
-	settings.SetToolTip("badEnding", "Ends the run on the Bad Ending cutscene at the end of Loading Dock. Ensure that IL mode and Good Ending are disabled!");
-	
-	settings.Add("hundredPercent", false, "Good Ending");
-	settings.SetToolTip("hundredPercent", "Ends the run on the Good Ending cutscene at the end of Vykkers Suites. Ensure that IL mode and Bad Ending are disabled!");
 	
 	// IL Settings
 	
-	settings.Add("ilMode", false, "IL Mode");
-	settings.SetToolTip("ilMode", "Enable IL mode. Ensure that both Good Ending and Bad Ending are disabled! Make sure to select the sub-option for the level you want to run.");
+	settings.CurrentDefaultParent = "IL Mode";
 	
 	settings.Add("raisin", false, "Raisin's Cave", "ilMode");
 	settings.SetToolTip("raisin", "Raisin's Cave");
-	
-	settings.Add("spooce", false, "Spooceshrub Forest", "ilMode");
-	settings.SetToolTip("spooce", "Spooceshrub Forest");
-	
-	settings.Add("fuzzle", false, "Fuzzle Testing", "ilMode");
-	settings.SetToolTip("fuzzle", "Fuzzle Testing");
-	
-	settings.Add("hydro", false, "Hydroponic Vats", "ilMode");
-	settings.SetToolTip("hydro", "Hydroponic Vats");
-	
-	settings.Add("fluoride", false, "Fluoride Tanks", "ilMode");
-	settings.SetToolTip("fluoride", "Fluoride Tanks");
-	
-	settings.Add("snoozie", false, "Snoozie Lab", "ilMode");
-	settings.SetToolTip("snoozie", "Snoozie Lab");
-	
-	settings.Add("mudPens", false, "Mudokon Pens", "ilMode");
-	settings.SetToolTip("mudPens", "Mudokon Pens");
-	
-	settings.Add("slogOne", false, "Sloghut 1027", "ilMode");
-	settings.SetToolTip("slogOne", "Sloghut 1027");
-	
-	settings.Add("fortress", false, "Mudokon Fortress", "ilMode");
-	settings.SetToolTip("fortress", "Mudokon Fortress");
-	
-	settings.Add("slogTwo", false, "Sloghut 2813", "ilMode");
-	settings.SetToolTip("slogTwo", "Sloghut 2813");
-	
-	settings.Add("paramite", false, "Paramite Run", "ilMode");
-	settings.SetToolTip("paramite", "Paramite Run");
-	
-	settings.Add("meep", false, "Meep Herder Village", "ilMode");
-	settings.SetToolTip("meep", "Meep Herder Village");
-	
-	settings.Add("brewery", false, "Brewery To Be", "ilMode");
-	settings.SetToolTip("brewery", "Brewery To Be");
-	
-	settings.Add("fuel", false, "Fuel Fields", "ilMode");
-	settings.SetToolTip("fuel", "Fuel Fields");
-	
-	settings.Add("magog", false, "Magog Motors", "ilMode");
-	settings.SetToolTip("magog", "Magog Motors");
-	
-	settings.Add("river", false, "Dead River", "ilMode");
-	settings.SetToolTip("river", "Dead River");
-	
-	settings.Add("noMuds", false, "No Muds Land", "ilMode");
-	settings.SetToolTip("noMuds", "No Muds Land");
-	
-	settings.Add("boiler", false, "Boiler Room", "ilMode");
-	settings.SetToolTip("boiler", "Boiler Room");
-	
-	settings.Add("splinter", false, "Splinterz Manufacturing", "ilMode");
-	settings.SetToolTip("splinter", "Splinterz Manufacturing");
-	
-	settings.Add("reservoir", false, "Reservoir Row", "ilMode");
-	settings.SetToolTip("reservoir", "Reservoir Row");
-	
-	settings.Add("scrubPens", false, "Flub Fuels Scrub Pens", "ilMode");
-	settings.SetToolTip("scrubPens", "Flub Fuels Scrub Pens");
-	
-	settings.Add("flubco", false, "Flubco Executive Office", "ilMode");
-	settings.SetToolTip("flubco", "Flubco Executive Office");
 	
 	settings.Add("dockBad", false, "Loading Dock (Bad Ending)", "ilMode");
 	settings.SetToolTip("dockBad", "Loading Dock (Bad Ending)");
@@ -150,11 +125,25 @@ startup {
 	settings.Add("dockGood", false, "Loading Dock (Good Ending)", "ilMode");
 	settings.SetToolTip("dockGood", "Loading Dock (Good Ending)");
 	
-	settings.Add("labor", false, "Labor Egg Storage", "ilMode");
-	settings.SetToolTip("labor", "Labor Egg Storage");
+	settings.Add("other", false, "All Other Levels", "ilMode");
+	settings.SetToolTip("other", "All levels other than Loading Dock");
 	
-	settings.Add("vykker", false, "Vykkers Suites", "ilMode");
-	settings.SetToolTip("vykker", "Vykkers Suites");
+	//Counters automatic display in LiveSplit
+	
+	vars.SetTextComponent = (Action<string, string>)((id, text) =>
+	{
+        var textSettings = timer.Layout.Components.Where(x => x.GetType().Name == "TextComponent").Select(x => x.GetType().GetProperty("Settings").GetValue(x, null));
+        var textSetting = textSettings.FirstOrDefault(x => (x.GetType().GetProperty("Text1").GetValue(x, null) as string) == id);
+        if (textSetting == null){
+            var textComponentAssembly = Assembly.LoadFrom("Components\\LiveSplit.Text.dll");
+            var textComponent = Activator.CreateInstance(textComponentAssembly.GetType("LiveSplit.UI.Components.TextComponent"), timer);
+            timer.Layout.LayoutComponents.Add(new LiveSplit.UI.Components.LayoutComponent("LiveSplit.Text.dll", textComponent as LiveSplit.UI.Components.IComponent));
+            textSetting = textComponent.GetType().GetProperty("Settings", BindingFlags.Instance | BindingFlags.Public).GetValue(textComponent, null);
+            textSetting.GetType().GetProperty("Text1").SetValue(textSetting, id);
+        }
+        if (textSetting != null);
+            textSetting.GetType().GetProperty("Text2").SetValue(textSetting, text);
+	});
 }
 
 init
@@ -236,6 +225,15 @@ update
 		vars.raisinFix = false;
 	}
 	
+	//Counters
+	
+	if(settings["Counters"]){
+		vars.SetTextComponent("Fuzzles", (vars.fuzzle).ToString() + " / " + (vars.fuzzlemax).ToString());
+		vars.SetTextComponent("Mudokons", (vars.mudokon).ToString() + " / " + (vars.mudokonmax).ToString());
+		vars.SetTextComponent("Eggs", (vars.egg).ToString() + " / " + (vars.eggmax).ToString());
+		vars.SetTextComponent("Total", (vars.total).ToString() + " / " + (vars.totalmax).ToString());
+		return;
+	}
 	
 }
 
@@ -244,7 +242,7 @@ start
 	bool IStart = false;
 	if (settings["ilMode"] == false)
 	{
-		if ((current.gameState == 9) && (old.gameState == 13))
+		if (current.lvltimer > old.lvltimer)
 		{
 			vars.curLvl = 0;
 			vars.raisinFix = true;
@@ -255,192 +253,47 @@ start
 	}
 	else
 	{
-		if (settings["raisin"])
+		if (settings["ilMode"])
 		{
-			if ((current.gameState == 9) && (old.gameState == 13))
+			if (settings["raisin"])
 			{
-				vars.curLvl = 0;
-				vars.raisinFix = true;
-				vars.loading = false;
-				vars.trueLoad = false;
+				if (current.lvltimer > old.lvltimer)
+				{
+					vars.curLvl = 0;
+					vars.raisinFix = true;
+					vars.loading = false;
+					vars.trueLoad = false;
+					IStart = true;
+				}
+			}
+			
+			else if (settings["dockBad"] || settings["dockGood"])
+			{
+				if (settings["dockBad"])
+				{
+					vars.dockFix = true;
+				}
+				else
+				{
+					vars.dockFix = false;
+				}
+				if (current.lvltimer > old.lvltimer)
+				{
+					IStart = true;
+				}
+			}
+
+			else if (settings["other"])
+			{
+				if (current.lvltimer > old.lvltimer && current.levelId == 23)
+				{
+					vars.vykkerFix = true;
 				IStart = true;
-			}
-		}
-		else if (settings["spooce"])
-		{
-			if (current.loadScreenIndex == "1" && current.levelId == 1 && current.isLoad == 1)
-			{
-				IStart = true;
-			}
-		}
-		else if (settings["fuzzle"])
-		{
-			if (current.loadScreenIndex == "2" && current.levelId == 2 && current.isLoad == 1)
-			{
-				IStart = true;
-			}
-		}
-		else if (settings["hydro"])
-		{
-			if (current.loadScreenIndex == "3" && current.levelId == 3 && current.isLoad == 1)
-			{
-				IStart = true;
-			}
-		}
-		else if (settings["fluoride"])
-		{
-			if (current.loadScreenIndex == "4" && current.levelId == 4 && current.isLoad == 1)
-			{
-				IStart = true;
-			}
-		}
-		else if (settings["snoozie"])
-		{
-			if (current.loadScreenIndex == "5" && current.levelId == 5 && current.isLoad == 1)
-			{
-				IStart = true;
-			}
-		}
-		else if (settings["mudPens"])
-		{
-			if (current.loadScreenIndex == "6" && current.levelId == 6 && current.isLoad == 1)
-			{
-				IStart = true;
-			}
-		}
-		else if (settings["slogOne"])
-		{
-			if (current.loadScreenIndex == "7" && current.levelId == 7 && current.isLoad == 1)
-			{
-				IStart = true;
-			}
-		}
-		else if (settings["fortress"])
-		{
-			if (current.loadScreenIndex == "8" && current.levelId == 8 && current.isLoad == 1)
-			{
-				IStart = true;
-			}
-		}
-		else if (settings["slogTwo"])
-		{
-			if (current.loadScreenIndex == "9" && current.levelId == 9 && current.isLoad == 1)
-			{
-				IStart = true;
-			}
-		}
-		else if (settings["paramite"])
-		{
-			if (current.loadScreenIndex == "10" && current.levelId == 10 && current.isLoad == 1)
-			{
-				IStart = true;
-			}
-		}
-		else if (settings["meep"])
-		{
-			if (current.loadScreenIndex == "11" && current.levelId == 11 && current.isLoad == 1)
-			{
-				IStart = true;
-			}
-		}
-		else if (settings["brewery"])
-		{
-			if (current.loadScreenIndex == "12" && current.levelId == 12 && current.isLoad == 1)
-			{
-				IStart = true;
-			}
-		}
-		else if (settings["fuel"])
-		{
-			if (current.loadScreenIndex == "13" && current.levelId == 13 && current.isLoad == 1)
-			{
-				IStart = true;
-			}
-		}
-		else if (settings["magog"])
-		{
-			if (current.loadScreenIndex == "14" && current.levelId == 14 && current.isLoad == 1)
-			{
-				IStart = true;
-			}
-		}
-		else if (settings["river"])
-		{
-			if (current.loadScreenIndex == "15" && current.levelId == 15 && current.isLoad == 1)
-			{
-				IStart = true;
-			}
-		}
-		else if (settings["noMuds"])
-		{
-			if (current.loadScreenIndex == "16" && current.levelId == 16 && current.isLoad == 1)
-			{
-				IStart = true;
-			}
-		}
-		else if (settings["boiler"])
-		{
-			if (current.loadScreenIndex == "17" && current.levelId == 17 && current.isLoad == 1)
-			{
-				IStart = true;
-			}
-		}
-		else if (settings["splinter"])
-		{
-			if (current.loadScreenIndex == "18" && current.levelId == 18 && current.isLoad == 1)
-			{
-				IStart = true;
-			}
-		}
-		else if (settings["reservoir"])
-		{
-			if (current.loadScreenIndex == "19" && current.levelId == 19 && current.isLoad == 1)
-			{
-				IStart = true;
-			}
-		}
-		else if (settings["scrubPens"])
-		{
-			if (current.loadScreenIndex == "20" && current.levelId == 20 && current.isLoad == 1)
-			{
-				IStart = true;
-			}
-		}
-		else if (settings["flubco"])
-		{
-			if (current.loadScreenIndex == "21" && current.levelId == 21 && current.isLoad == 1)
-			{
-				IStart = true;
-			}
-		}
-		else if (settings["dockBad"] || settings["dockGood"])
-		{
-			if (settings["dockBad"])
-			{
-				vars.dockFix = true;
-			}
-			else
-			{
-				vars.dockFix = false;
-			}
-			if (current.loadScreenIndex == "22" && current.levelId == 22 && current.isLoad == 1)
-			{
-				IStart = true;
-			}
-		}
-		else if (settings["labor"])
-		{
-			if (current.loadScreenIndex == "23" && current.levelId == 23 && current.isLoad == 1)
-			{
-				IStart = true;
-			}
-		}
-		else if (settings["vykker"])
-		{
-			if (current.loadScreenIndex == "24" && current.levelId == 23 && current.isLoad == 1)
-			{
-				vars.vykkerFix = true;
-				IStart = true;
+				}
+				else if (current.lvltimer > old.lvltimer && current.levelId != 23)
+				{
+					IStart = true;
+				}
 			}
 		}
 	}
@@ -559,6 +412,9 @@ split
 				}
 			
 				vars.curLvl = current.levelId;
+				vars.fuzzlemem = (current.fuzzle);
+				vars.mudokonmem = (current.mudokon);
+				vars.eggmem = (current.egg);
 				return true;
 			}
 			
@@ -577,230 +433,130 @@ split
 	else
 	{
 		// normal splits
-		if (settings["raisin"])
-		{
-			if (current.levelId == 1)
-			{
-				return true;
-			}
-		}
-		else if (settings["spooce"])
-		{
-			if (current.levelId == 2)
-			{
-				return true;
-			}
-		}
-		else if (settings["fuzzle"])
-		{
-			if (current.levelId == 3)
-			{
-				return true;
-			}
-		}
-		else if (settings["hydro"])
-		{
-			if (current.levelId == 4)
-			{
-				return true;
-			}
-		}
-		else if (settings["fluoride"])
-		{
-			if (current.levelId == 5)
-			{
-				return true;
-			}
-		}
-		else if (settings["snoozie"])
-		{
-			if (current.levelId == 6)
-			{
-				return true;
-			}
-		}
-		else if (settings["mudPens"])
-		{
-			if (current.levelId == 7)
-			{
-				return true;
-			}
-		}
-		else if (settings["slogOne"])
-		{
-			if (current.levelId == 8)
-			{
-				return true;
-			}
-		}
-		else if (settings["fortress"])
-		{
-			if (current.levelId == 9)
-			{
-				return true;
-			}
-		}
-		else if (settings["slogTwo"])
-		{
-			if (current.levelId == 10)
-			{
-				return true;
-			}
-		}
-		else if (settings["paramite"])
-		{
-			if (current.levelId == 11)
-			{
-				return true;
-			}
-		}
-		else if (settings["meep"])
-		{
-			if (current.levelId == 12)
-			{
-				return true;
-			}
-		}
-		else if (settings["brewery"])
-		{
-			if (current.levelId == 13)
-			{
-				return true;
-			}
-		}
-		else if (settings["fuel"])
-		{
-			if (current.levelId == 14)
-			{
-				return true;
-			}
-		}
-		else if (settings["magog"])
-		{
-			if (current.levelId == 15)
-			{
-				return true;
-			}
-		}
-		else if (settings["river"])
-		{
-			if (current.levelId == 16)
-			{
-				return true;
-			}
-		}
-		else if (settings["noMuds"])
-		{
-			if (current.levelId == 17)
-			{
-				return true;
-			}
-		}
-		else if (settings["boiler"])
-		{
-			if (current.levelId == 18)
-			{
-				return true;
-			}
-		}
-		else if (settings["splinter"])
-		{
-			if (current.levelId == 19)
-			{
-				return true;
-			}
-		}
-		else if (settings["reservoir"])
-		{
-			if (current.levelId == 20)
-			{
-				return true;
-			}
-		}
-		else if (settings["scrubPens"])
-		{
-			if (current.levelId == 21)
-			{
-				return true;
-			}
-		}
-		else if (settings["flubco"])
-		{
-			if (current.levelId == 22)
-			{
-				return true;
-			}
-		}
-		else if (settings["dockGood"])
-		{
-			if (current.levelId == 23)
-			{
-				return true;
-			}
-		}
-		//non-standard split for ending labor egg storage
-		else if (settings["labor"])
-		{
-			if (current.levelId == 23 && current.loadScreenIndex == "24")
-			{
-				return true;
-			}
-		}
-		// non-standard splits for ending game
-		else if (settings["dockBad"])
-		{
+		
+		if(settings["ilMode"]){
+		
+			if(current.levelId > old.levelId){
 			
-			if ((current.levelId == 22) && (current.gameState == 7) && (old.levelId == 22) && (old.gameState == 0))
-			{
-				if (vars.dockFix == true)
-				{
-					vars.dockFix = false;
-					return false;
+				if (current.levelId == 23 && current.loadScreenIndex == "24"){
+					return true;
 				}
-				else
+				
+				else if ((current.levelId == 22) && (current.gameState == 7) && (old.levelId == 22) && (old.gameState == 0))
 				{
+					if (vars.dockFix == true)
+					{
+						vars.dockFix = false;
+						return false;
+					}
+					else
+					{
+						return true;
+					}
+				}
+				
+				else if (current.levelId == 23 && current.gameState == 7 && old.gameState == 0){
+				
+					if (vars.vykkerFix == true)
+					{
+						vars.vykkerFix = false;
+						return false;
+					}
+					else
+					{
+						return true;
+					}
+				}
+				
+				else if(current.levelId == 1 && vars.raisinFix == true){
+					return true;
+				}
+				
+				else if(current.levelId != 1 && current.levelId == (old.levelId + 1)){
 					return true;
 				}
 			}
 		}
-		else if (settings["vykker"])
-		{
-			if (current.levelId == 23 && current.gameState == 7 && old.gameState == 0)
-			{
-				if (vars.vykkerFix == true)
-				{
-					vars.vykkerFix = false;
-					return false;
-				}
-				else
-				{
-					return true;
-				}
+	}
+	//Counters
+	
+	if(settings["Counters"]){
+		
+		
+		//Fuzzle counters
+		
+		if(current.fuzzle != old.fuzzle){
+			vars.fuzzle = (current.fuzzle);
+		}
+		
+
+		//Mudokon counters
+		
+		if(current.levelId == 23){
+			if(current.mudokon2 != old.mudokon2){
+				vars.mudokon = (current.mudokon2);
 			}
 		}
+		
+		else if(current.mudokon != old.mudokon){
+			vars.mudokon = (current.mudokon);
+		}	
+		
+		
+		//Egg counters
+		
+		if(current.egg != old.egg){
+			vars.egg = (current.egg);
+		}		
+		
+		
+		//Total
+		
+		if(current.lvltimer < 0.5 && vars.stop == 0){
+			vars.fuzzlemax = (current.fuzzlelvl);
+			vars.mudokonmax = (current.mudokonlvl);
+			vars.eggmax = (current.egglvl);
+			vars.totalmax = ((vars.totalmax) + (vars.fuzzlemax) + (vars.mudokonmax) + (vars.eggmax));
+			vars.stop++;
+		}
+		if(current.lvltimer > 0.5 && vars.stop == 1){
+			vars.stop--;
+		}
+		
+		
+		if(current.lvltimer > 0.5 && vars.level == current.levelId && current.lvltimer != old.lvltimer){
+			vars.level++;
+		}
+		
+		if(current.lvltimer < 0.5 && vars.stopcount == 0){
+			vars.stopcount++;
+			vars.totalmem2 = ((vars.fuzzlemem) + (vars.mudokonmem) + (vars.eggmem));
+			vars.totalmem = ((vars.totalmem) + (vars.totalmem2));
+		}
+		
+		if(current.lvltimer > old.lvltimer){
+			vars.total = ((vars.totalmem) + (vars.fuzzle) + (vars.mudokon) + (vars.egg));
+		}
+		
+		if(current.lvltimer > 0.5 && vars.stopcount == 1){
+			vars.stopcount--;
+		}
+		
+		
 	}
 	
 }
 
+
+
 isLoading
 {	
-	if (current.gameState == 9 && old.gameState == 5){
-		vars.ThisIsNOTAFuckingCinematic = true;
-	} else if ((current.gameState < 9 || current.gameState > 9) && vars.ThisIsNOTAFuckingCinematic) {
-		vars.ThisIsNOTAFuckingCinematic = false;
+	if(current.lvltimer == old.lvltimer && current.gameState != 5 && current.gameState != 11 && current.gameState != 12 && current.gameState != 14 && current.gameState != 15 && current.gameState != 9 && current.gameState != 6 && current.gameState != 10){
+		return true;
 	}
 	
-	if ((current.isLoad == 1) && (old.isLoad == 0))
-	{
-		return true;
-	}
-	else if ((current.isLoad == 1) && (old.isLoad == 1))
-	{
-		return true;
-	}
-	else
-	{
-		return false;
+	else {
+	return false;
 	}
 }
 
@@ -808,19 +564,60 @@ reset
 {
 	if (settings["ilMode"] == false)
 	{
-		if (vars.gameCrashed == true || vars.raisinFix == true)
+		if (vars.gameCrashed == true || vars.raisinFix == true && current.lvltimer < 0.5)
 		{
 			return false;
 		}
-		else if(current.levelId == 0 && current.gameState == 10)
+		else if(current.levelId == 0 && current.gameState == 13)
 		{
+			vars.fuzzlemax = 0;
+			vars.mudokonmax = 0;
+			vars.eggmax = 0;
+			vars.totalmax = 0;
+			vars.fuzzlemem = 0;
+			vars.mudokonmem = 0;
+			vars.eggmem = 0;
+			vars.fuzzlememlvl = 0;
+			vars.eggmemlvl = 0;
+			vars.total = 0;
+			vars.totalmem = 0;
+			vars.totalmem2 = 0;
+			vars.stop = 0;
+			vars.stopcount = 0;
+			vars.level = 0;
+			vars.reset = 0;
 			vars.curLvl = -1;
 			return true;
 		}
 	}
 	else
 	{
-		// unknown if needed, resetting on a single level seems unnecessary when it can be done manually
-		return false;
+		if (vars.gameCrashed == true)
+		{
+			return false;
+		}
+		else if(current.gameState == 7 && vars.reset == 0){
+			vars.reset++;
+		}
+		if(vars.reset == 1 && current.lvltimer < 0.5){
+			vars.fuzzlemax = 0;
+			vars.mudokonmax = 0;
+			vars.eggmax = 0;
+			vars.totalmax = 0;
+			vars.fuzzlemem = 0;
+			vars.mudokonmem = 0;
+			vars.eggmem = 0;
+			vars.fuzzlememlvl = 0;
+			vars.eggmemlvl = 0;
+			vars.total = 0;
+			vars.totalmem = 0;
+			vars.totalmem2 = 0;
+			vars.stop = 0;
+			vars.stopcount = 0;
+			vars.level = 0;
+			vars.reset = 0;
+			vars.curLvl = -1;
+			return true;
+		}
 	}
 }
