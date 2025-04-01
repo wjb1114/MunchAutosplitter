@@ -1,4 +1,4 @@
-state("Munch", "v3.0.2 03-02-2025 wjb1114#8967, LegnaX#7777 and Fxyz")
+state("Munch", "v3.0.2 01-04-2025 wjb1114#8967, LegnaX#7777 and Fxyz")
 {
 	byte levelId : 0x332188;
 	byte isLoad : 0x318351;
@@ -70,7 +70,6 @@ startup {
 	vars.stopcount = 0;
 	vars.level = 0;
 	vars.reset = 0;
-	vars.labordone = 0;
 	vars.NoMultipleSplits = 0;
 
 	settings.Add("badEnding", false, "Bad Ending");
@@ -638,6 +637,9 @@ split
 			else if (vars.curLvl == 23 && current.loadScreenIndex == "24")
 			{
 				vars.curLvl = 24;
+				vars.fuzzlemem = (current.fuzzle);
+				vars.mudokonmem = (current.mudokon);
+				vars.eggmem = (current.egg);
 				return true;
 			}
 			else if (vars.curLvl == 24 && current.gameState == 7 && old.gameState == 0)
@@ -892,12 +894,7 @@ split
 		
 		//Mudokon counters
 		
-		if(current.levelId == 23 && current.loadScreenIndex == "24")
-		{
-			vars.labordone++;
-		}
-		
-		if(current.levelId == 23 && vars.labordone == 1|| settings["vykker"])
+		if(current.loadScreenIndex == "24" || settings["vykker"])
 		{
 			if(current.mudokon2 != old.mudokon2)
 			{
@@ -933,7 +930,6 @@ split
 		{
 			vars.stop--;
 		}
-		
 		
 		if(current.lvltimer > 5 && vars.level == current.levelId && current.lvltimer != old.lvltimer)
 		{
@@ -1002,7 +998,6 @@ reset
 			vars.level = 0;
 			vars.reset = 0;
 			vars.curLvl = -1;
-			vars.labordone = 0;
 			vars.NoMultipleSplits = 0;
 			return true;
 		}
@@ -1039,7 +1034,6 @@ reset
 			vars.stopcount = 0;
 			vars.level = 0;
 			vars.curLvl = -1;
-			vars.labordone = 0;
 			vars.NoMultipleSplits = 0;
 			return true;
 		}
