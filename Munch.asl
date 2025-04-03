@@ -1,4 +1,4 @@
-state("Munch", "v3.0.2 01-04-2025 wjb1114#8967, LegnaX#7777 and Fxyz")
+state("Munch", "v3.0.3 03-04-2025 wjb1114#8967, LegnaX#7777 and Fxyz")
 {
 	byte levelId : 0x332188;
 	byte isLoad : 0x318351;
@@ -71,6 +71,7 @@ startup {
 	vars.level = 0;
 	vars.reset = 0;
 	vars.NoMultipleSplits = 0;
+	vars.labordone = 0;
 
 	settings.Add("badEnding", false, "Bad Ending");
 	settings.SetToolTip("badEnding", "Ends the run on the Bad Ending cutscene at the end of Loading Dock. Ensure that IL mode and Good Ending are disabled!");
@@ -637,9 +638,6 @@ split
 			else if (vars.curLvl == 23 && current.loadScreenIndex == "24")
 			{
 				vars.curLvl = 24;
-				vars.fuzzlemem = (current.fuzzle);
-				vars.mudokonmem = (current.mudokon);
-				vars.eggmem = (current.egg);
 				return true;
 			}
 			else if (vars.curLvl == 24 && current.gameState == 7 && old.gameState == 0)
@@ -918,6 +916,15 @@ split
 		
 		//Total
 		
+		//to prevent weird behavior when entering Vykers Suites
+		if(current.levelId == 23 && current.fuzzle == 0 && current.mudokon == 0 && current.egg == 0 && old.fuzzle == 12 && old.mudokon == 14 && old.egg == 36 && vars.labordone == 0)
+		{
+			vars.fuzzlemem = (old.fuzzle);
+			vars.mudokonmem = (old.mudokon);
+			vars.eggmem = (old.egg);
+			vars.labordone++;
+		}
+		
 		if(current.lvltimer < 5 && vars.stop == 0)
 		{
 			vars.fuzzlemax = (current.fuzzlelvl);
@@ -999,6 +1006,7 @@ reset
 			vars.reset = 0;
 			vars.curLvl = -1;
 			vars.NoMultipleSplits = 0;
+			vars.labordone = 0;
 			return true;
 		}
 	}
@@ -1035,6 +1043,7 @@ reset
 			vars.level = 0;
 			vars.curLvl = -1;
 			vars.NoMultipleSplits = 0;
+			vars.labordone = 0;
 			return true;
 		}
 	}
