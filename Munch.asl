@@ -96,7 +96,6 @@ startup {
 	vars.eggmemlvl = 0;
 	vars.stop = 0;
 	vars.stopcount = 0;
-	vars.level = 0;
 	vars.reset = 0;
 	vars.NoMultipleSplits = 0;
 	vars.labordone = 0;
@@ -904,7 +903,6 @@ split
 				vars.totalmem2 = 0;
 				vars.stop = 0;
 				vars.stopcount = 0;
-				vars.level = 0;
 				vars.reset = 0;
 				vars.curLvl = -1;
 				vars.NoMultipleSplits = 0;
@@ -1238,14 +1236,9 @@ split
 			vars.totalmax = ((vars.totalmax) + (vars.fuzzlemax) + (vars.mudokonmax) + (vars.eggmax));
 			vars.stop++;
 		}
-		if(current.lvltimer > 5 && vars.stop == 1)
+		if(current.lvltimer > 5 && vars.stop == 1 || current.levelId == (old.levelId + 1) && vars.stop == 1)
 		{
 			vars.stop--;
-		}
-		
-		if(current.lvltimer > 5 && vars.level == current.levelId && current.lvltimer != old.lvltimer)
-		{
-			vars.level++;
 		}
 		
 		if(current.lvltimer < 5 && vars.stopcount == 0)
@@ -1261,7 +1254,7 @@ split
 			vars.total = ((vars.totalmem) + (vars.fuzzle) + (vars.mudokon) + (vars.egg));
 		}
 		
-		if(current.lvltimer > 5 && vars.stopcount == 1)
+		if(current.lvltimer > 5 && vars.stopcount == 1 || current.levelId == (old.levelId + 1) && vars.stopcount == 1)
 		{
 			vars.stopcount--;
 		}
@@ -1996,7 +1989,6 @@ reset
 			vars.totalmem2 = 0;
 			vars.stop = 0;
 			vars.stopcount = 0;
-			vars.level = 0;
 			vars.reset = 0;
 			vars.curLvl = -1;
 			vars.NoMultipleSplits = 0;
@@ -2095,7 +2087,6 @@ reset
 			vars.stop = 0;
 			vars.reset = 0;
 			vars.stopcount = 0;
-			vars.level = 0;
 			vars.curLvl = -1;
 			vars.NoMultipleSplits = 0;
 			vars.labordone = 0;
